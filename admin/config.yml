@@ -1,0 +1,337 @@
+# yaml-language-server: $schema=../../node_modules/@sveltia/cms/schema/sveltia-cms.json
+#
+# Administration du site (Sveltia CMS) : ce que Guillaume peut modifier depuis
+# https://www.twooldwheels.fr/admin, et comment.
+#
+# Chaque rubrique ci-dessous correspond à un fichier de src/content/. Les
+# schémas Astro (src/content.config.ts) valident les mêmes champs au build :
+# `npm run check:cms` vérifie que les deux restent alignés.
+#
+# UNE VALEUR À RENSEIGNER une fois le dépôt GitHub créé (voir README, section
+# « Mise en ligne ») : `repo`.
+
+backend:
+  name: github
+  repo: Duron-Crone/Two_Old_Wheels-   # propriétaire/nom-du-depot sur GitHub
+  branch: main
+  # Connexion par jeton GitHub uniquement : aucun service de connexion à
+  # héberger. Le bouton « Se connecter avec GitHub » (OAuth) demanderait un
+  # serveur intermédiaire qui garde le secret de l'application GitHub.
+  auth_methods: [token]
+  commit_messages:
+    update: 'Contenu : {{path}}'
+    uploadMedia: 'Photo ajoutée : {{path}}'
+    deleteMedia: 'Photo supprimée : {{path}}'
+
+app_title: Two Old Wheels, administration
+logo_url: /favicon.svg
+site_url: https://www.twooldwheels.fr
+display_url: https://www.twooldwheels.fr
+
+# L'aperçu intégré afficherait les champs bruts, sans la mise en page du site :
+# plus déroutant qu'utile. Le lien « voir sur le site » de chaque page le remplace.
+editor:
+  preview: false
+
+# Toutes les photos au même endroit ; Astro les optimise au build.
+media_folder: /src/assets/photos
+public_folder: /src/assets/photos
+
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      # Une photo de téléphone pèse souvent 5 à 12 Mo. Elle est convertie en WebP
+      # et ramenée à 2048 px au plus, dans le navigateur, avant l'envoi : le
+      # dépôt ne grossit pas et la publication reste rapide.
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2048
+          height: 2048
+
+singletons:
+  # ------------------------------------------------------------------ Listes
+  - name: motos
+    label: Motos à vendre
+    icon: two_wheeler
+    file: src/content/motos.yml
+    preview_path: /vente
+    fields:
+      - name: motos
+        label: Motos
+        label_singular: moto
+        widget: list
+        required: false
+        add_to_top: true
+        summary: '{{fields.description}}'
+        thumbnail: photo
+        hint: >-
+          Faites glisser pour changer l'ordre d'affichage. Une moto vendue peut rester
+          affichée avec le bandeau « Vendue », ou être supprimée.
+        fields:
+          - { name: photo, label: Photo, widget: image }
+          - name: description
+            label: Description de la photo
+            widget: string
+            hint: 'Modèle et couleur, par exemple « Honda Dax rouge ». Lue par Google et par les personnes malvoyantes.'
+          - { name: titre, label: Titre, widget: string, required: false, hint: 'Facultatif. Affiché en gros au-dessus de la description.' }
+          - { name: prix, label: Prix, widget: string, required: false, hint: 'Facultatif, par exemple « 3 500 € ». Masqué quand la moto est vendue.' }
+          - { name: vendue, label: Vendue, widget: boolean, default: false, required: false }
+
+  - name: galerie
+    label: Galerie photos
+    icon: photo_library
+    file: src/content/galerie.yml
+    preview_path: /galerie-photos
+    fields:
+      - name: photos
+        label: Photos
+        label_singular: photo
+        widget: list
+        add_to_top: true
+        summary: '{{fields.categorie}} · {{fields.description}}'
+        thumbnail: photo
+        hint: >-
+          Les quatre premières apparaissent aussi sur la page d'accueil. Faites glisser
+          pour changer l'ordre.
+        fields:
+          - { name: photo, label: Photo, widget: image }
+          - name: description
+            label: Description
+            widget: string
+            hint: 'Ce qu''on voit sur la photo. Affichée sous la photo, lue par Google et par les personnes malvoyantes.'
+          - name: categorie
+            label: Catégorie
+            widget: select
+            options: [Mécanique, Moteur, Partie cycle, Électricité, Carrosserie, Custom, Vintage, Vente]
+
+  - name: prestations
+    label: Prestations
+    icon: build
+    file: src/content/prestations.yml
+    preview_path: /reparation
+    fields:
+      - name: prestations
+        label: Prestations
+        label_singular: prestation
+        widget: list
+        summary: '{{fields.titre}}'
+        thumbnail: photo
+        hint: Affichées sur l'accueil et sur la page Réparation, dans cet ordre.
+        fields:
+          - { name: titre, label: Titre, widget: string, maxlength: 40 }
+          - { name: texte, label: Texte, widget: text, maxlength: 220 }
+          - { name: photo, label: Photo, widget: image }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
+
+  - name: faq
+    label: Questions fréquentes
+    icon: help
+    file: src/content/faq.yml
+    preview_path: /
+    fields:
+      - name: questions
+        label: Questions
+        label_singular: question
+        widget: list
+        summary: '{{fields.question}}'
+        hint: >-
+          Dans une réponse, écrivez {telephone} ou {adresse} : le site affichera le numéro
+          et l'adresse à jour.
+        fields:
+          - { name: question, label: Question, widget: string }
+          - { name: reponse, label: Réponse, widget: text }
+
+  - divider: true
+
+  # ------------------------------------------------------------------- Pages
+  - name: page-accueil
+    label: Page d'accueil
+    icon: home
+    file: src/content/page-accueil.yml
+    preview_path: /
+    fields:
+      - name: hero
+        label: En haut de page
+        widget: object
+        fields:
+          - { name: titre, label: Grand titre, widget: string, maxlength: 70 }
+          - { name: texte, label: Texte, widget: text, maxlength: 260 }
+          - { name: photo, label: Photo, widget: image }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
+          - { name: legende, label: Légende sous la photo, widget: string, required: false }
+      - name: atelier
+        label: Présentation de l'atelier
+        widget: object
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - name: paragraphes
+            label: Paragraphes
+            label_singular: paragraphe
+            widget: list
+            min: 1
+            field: { name: paragraphe, label: Paragraphe, widget: text }
+          - { name: photo, label: Photo, widget: image }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
+          - { name: legende, label: Légende sous la photo, widget: string, required: false }
+      - name: prestations
+        label: Titre de la section Prestations
+        widget: object
+        collapsed: true
+        fields:
+          - { name: titre, label: Titre, widget: string }
+      - name: vente
+        label: Section Vente
+        widget: object
+        collapsed: true
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - { name: texte, label: Texte, widget: text }
+          - { name: photo, label: Photo, widget: image }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
+          - { name: legende, label: Légende sous la photo, widget: string, required: false }
+      - name: galerie
+        label: Titre de la section Galerie
+        widget: object
+        collapsed: true
+        fields:
+          - { name: titre, label: Titre, widget: string }
+      - name: faq
+        label: Titre de la section Questions fréquentes
+        widget: object
+        collapsed: true
+        fields:
+          - { name: titre, label: Titre, widget: string }
+      - name: appel
+        label: Appel en bas de page
+        widget: object
+        collapsed: true
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - { name: texte, label: Texte, widget: text }
+      - &referencement
+        name: referencement
+        label: Référencement Google
+        widget: object
+        collapsed: true
+        hint: Ce qui s'affiche dans les résultats de recherche. À modifier avec prudence.
+        fields:
+          # « Two Old Wheels » est ajouté au bout du titre quand il n'y est pas déjà,
+          # sauf si le total dépasse 60 caractères, la longueur qu'affiche Google.
+          - { name: titre, label: Titre dans Google, widget: string, maxlength: 60 }
+          - { name: description, label: Description dans Google, widget: text, minlength: 70, maxlength: 155 }
+
+  - name: page-reparation
+    label: Page Réparation
+    icon: handyman
+    file: src/content/page-reparation.yml
+    preview_path: /reparation
+    fields:
+      - { name: titre, label: Grand titre, widget: string }
+      - { name: texte, label: Texte d'introduction, widget: text }
+      - name: appel
+        label: Appel en bas de page
+        widget: object
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - { name: texte, label: Texte, widget: text }
+      - *referencement
+
+  - name: page-vente
+    label: Page Vente
+    icon: sell
+    file: src/content/page-vente.yml
+    preview_path: /vente
+    fields:
+      - { name: titre, label: Grand titre, widget: string }
+      - { name: texte, label: Texte d'introduction, widget: text }
+      - name: encarts
+        label: Encarts sous les motos
+        label_singular: encart
+        widget: list
+        max: 4
+        summary: '{{fields.titre}}'
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - { name: texte, label: Texte, widget: text }
+      - name: appel
+        label: Appel en bas de page
+        widget: object
+        fields:
+          - { name: titre, label: Titre, widget: string }
+      - *referencement
+
+  - name: page-galerie
+    label: Page Galerie
+    icon: collections
+    file: src/content/page-galerie.yml
+    preview_path: /galerie-photos
+    fields:
+      - { name: titre, label: Grand titre, widget: string }
+      - { name: texte, label: Texte d'introduction, widget: text }
+      - *referencement
+
+  - name: page-contact
+    label: Page Contact
+    icon: call
+    file: src/content/page-contact.yml
+    preview_path: /contact
+    fields:
+      - { name: titre, label: Grand titre, widget: string }
+      - { name: texte, label: Texte d'introduction, widget: text }
+      - name: telephone
+        label: Bloc Téléphone et adresse
+        widget: object
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - { name: consigne, label: Consigne sous l'adresse, widget: string, required: false }
+      - name: reseaux
+        label: Bloc Instagram et Facebook
+        widget: object
+        fields:
+          - { name: titre, label: Titre, widget: string }
+          - { name: texte, label: Texte, widget: text }
+      - *referencement
+
+  - divider: true
+
+  # -------------------------------------------------------------- Réglages
+  - name: reglages
+    label: Coordonnées et horaires
+    icon: settings
+    file: src/content/reglages.yml
+    fields:
+      - name: telephone
+        label: Téléphone
+        widget: string
+        pattern: ['^0[1-9]( ?[0-9]{2}){4}$', 'Numéro à 10 chiffres, par exemple 06 70 79 86 67']
+        hint: Mis à jour partout sur le site, y compris dans le bouton d'appel.
+      - { name: email, label: Email, widget: string, type: email, required: false, hint: "Facultatif. Sur la page Contact, l'adresse n'apparaît qu'après un clic du visiteur : elle n'est écrite nulle part dans les pages, pour rester hors de portée des robots collecteurs d'adresses." }
+      - name: horaires
+        label: Horaires d'ouverture
+        label_singular: plage horaire
+        widget: list
+        required: false
+        summary: '{{fields.jours}} : {{fields.ouverture}} à {{fields.fermeture}}'
+        hint: >-
+          Laissez vide tant que les horaires ne sont pas fixes : mieux vaut aucun horaire
+          qu'un horaire faux. Une fois renseignés, ils s'affichent sur la page Contact et
+          dans Google.
+        fields:
+          - name: jours
+            label: Jours
+            widget: select
+            multiple: true
+            options: [lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche]
+          - { name: ouverture, label: Ouverture, widget: string, pattern: ['^([01][0-9]|2[0-3]):[0-5][0-9]$', 'Format 09:00'] }
+          - { name: fermeture, label: Fermeture, widget: string, pattern: ['^([01][0-9]|2[0-3]):[0-5][0-9]$', 'Format 18:30'] }
+      - { name: instagram, label: Lien Instagram, widget: string, type: url, required: false }
+      - { name: facebook, label: Lien Facebook, widget: string, type: url, required: false }
+      - { name: accroche, label: Phrase du pied de page, widget: string, maxlength: 120 }
+      - name: presentation
+        label: Présentation courte de l'atelier
+        widget: text
+        maxlength: 200
+        hint: Lue par Google et par les assistants de recherche. Une ou deux phrases.

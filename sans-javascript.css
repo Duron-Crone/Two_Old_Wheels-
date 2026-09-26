@@ -1,0 +1,17 @@
+/* Feuille chargée uniquement par le <noscript> de BaseLayout.
+ *
+ * Les blocs à apparition démarrent à `opacity: 0` et c'est le script du site qui
+ * les affiche quand ils entrent dans l'écran. Sans JavaScript, ce script ne
+ * tourne jamais : les pages s'affichaient vides sous l'en-tête. Ici, rien n'est
+ * caché au départ.
+ *
+ * Elle ne peut pas vivre dans le <style> de la page : la CSP à empreintes
+ * n'autorise que les styles qu'Astro a lui-même empreintés, et une feuille liée
+ * est couverte par `style-src 'self'`. */
+/* `!important` : la feuille de la page est chargée après celle-ci, et les deux
+ * règles ont le même poids. Sans ça, c'est la règle qui cache qui gagnerait. */
+.reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Two Old Wheels, administration</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!--
+      Chemin absolu de la configuration. Sans cette balise, Sveltia cherche
+      `config.yml` à côté de la page ; or le site sert l'administration sous
+      `/admin` sans barre finale, et le chemin relatif pointerait sur la racine.
+    -->
+    <link rel="cms-config-url" type="application/yaml" href="/admin/config.yml" />
+  </head>
+  <body>
+    <!--
+      Hébergé sur le site plutôt que chargé depuis un CDN : la version est
+      verrouillée par package-lock.json, et l'administration ne dépend pas de la
+      disponibilité d'un service tiers. Copié depuis node_modules au build, cf.
+      integrations/sveltia-cms.mjs.
+    -->
+    <script src="/admin/cms/sveltia-cms.js"></script>
+  </body>
+</html>
