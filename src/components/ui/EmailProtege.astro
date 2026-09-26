@@ -21,14 +21,14 @@ interface Props {
 }
 
 const { email, libelle = "M'écrire un e-mail" } = Astro.props;
-const [utilisateur, domaine] = email.split('@');
+const [utilisateur = '', domaine = ''] = email.split('@');
 const encoder = (valeur: string) => Buffer.from(valeur, 'utf8').toString('base64');
 ---
 
 <p
   data-email-protege
   data-u={encoder(utilisateur)}
-  data-d={encoder(domaine ?? '')}
+  data-d={encoder(domaine)}
   class="mt-5"
 >
   <button

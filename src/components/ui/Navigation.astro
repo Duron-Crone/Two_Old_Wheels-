@@ -6,11 +6,6 @@ import { cheminPublic } from '@/utils/chemin';
 
 const currentPath = cheminPublic(Astro.url.pathname);
 
-// Le titre n'apparaît que sur l'accueil. L'en-tête étant persistant d'une page à
-// l'autre, l'état de départ est rendu ici et le script de BaseLayout le met à
-// jour ensuite, comme il le fait pour l'onglet actif.
-const isHome = currentPath === '/';
----
 
 {/* `transition:persist` : l'en-tête collant survit aux navigations sans se
     redessiner. La clé est nommée explicitement : sans nom, Astro en génère une
@@ -35,16 +30,14 @@ const isHome = currentPath === '/';
     </a>
 
     {/* Le nom façon générique de film : capitales condensées très espacées,
-        serrées entre deux filets. Masqué sous 1280 px, où le menu et le logo
-        occupent déjà toute la largeur. Le logo l'annonce déjà aux lecteurs
-        d'écran, d'où `aria-hidden`. */}
+        serrées entre deux filets. Sur toutes les pages. Masqué sous 1280 px, où
+        le menu et le logo occupent déjà toute la largeur : il passe alors en
+        bandeau sous l'en-tête, posé par BaseLayout. Le logo l'annonce déjà aux
+        lecteurs d'écran, d'où `aria-hidden`. */}
     <p
       data-cine-title
       aria-hidden="true"
-      class:list={[
-        'hidden xl:flex flex-col items-stretch min-w-0 select-none mx-6 2xl:mx-10',
-        !isHome && 'is-hidden',
-      ]}
+      class="hidden xl:flex flex-col items-stretch min-w-0 select-none mx-6 2xl:mx-10"
     >
       <span class="h-px bg-ink-900/20"></span>
       <span class="font-display text-[1.3rem] 2xl:text-[1.7rem] leading-none uppercase tracking-[0.3em] 2xl:tracking-[0.4em] text-ink-900 text-center whitespace-nowrap py-2 pl-[0.3em] 2xl:pl-[0.4em]">

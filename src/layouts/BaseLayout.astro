@@ -134,6 +134,19 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
     <Navigation />
 
+    {/* Le nom façon générique de film. Il vit dans l'en-tête à partir de
+        1280 px (cf. Navigation.astro) ; en dessous, le logo et le menu occupent
+        toute la barre et il n'y tiendrait pas, donc il passe ici, en bandeau
+        sous l'en-tête, où il a la place d'être lu. La taille suit la largeur de
+        l'écran, sans jamais passer à la ligne. */}
+    <p aria-hidden="true" class="xl:hidden container mx-auto px-4 pt-7 flex flex-col items-stretch select-none">
+      <span class="h-px bg-ink-900/20"></span>
+      <span class="font-display text-[clamp(1.15rem,5.4vw,2.25rem)] leading-none uppercase tracking-[0.3em] text-ink-900 text-center whitespace-nowrap py-3 pl-[0.3em]">
+        Two Old Wheels
+      </span>
+      <span class="h-px bg-ink-900/20"></span>
+    </p>
+
     <main id="contenu">
       <slot />
     </main>
@@ -145,10 +158,6 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <style is:global>
       /* Le titre de l'accueil dans l'en-tête persistant : `hidden` de Tailwind
          ne suffirait pas, `xl:flex` reprendrait le dessus au-delà de 1280 px. */
-      [data-cine-title].is-hidden {
-        display: none !important;
-      }
-
       /* --- Surtitres --- */
       /* Le filet était un cadratin posé dans le texte, ce qui est une
          convention anglo-saxonne et, accessoirement, lu à voix haute par les
@@ -389,12 +398,6 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
         });
       }
 
-      function syncHeader() {
-        // L'en-tête survit aux navigations : le titre doit suivre la page.
-        const home = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
-        document.querySelector('[data-cine-title]')?.classList.toggle('is-hidden', !home);
-      }
-
       function syncActiveLink() {
         // L'en-tête persistant garde le DOM de la page précédente : sans ça,
         // `aria-current` et l'état visuel resteraient sur l'ancien onglet.
@@ -417,7 +420,6 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
         bindMenu();
         closeMenu();
         syncActiveLink();
-        syncHeader();
       });
     </script>
   </body>

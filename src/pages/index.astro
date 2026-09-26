@@ -28,19 +28,6 @@ const jsonLd = [await motorcycleRepairSchema(), websiteSchema(), faqSchema(faq)]
   canonical="/"
   jsonLd={jsonLd}
 >
-  {/* Le nom façon générique de film. Il vit dans l'en-tête à partir de 1280 px
-      (cf. Navigation.astro) ; en dessous, le logo et le menu occupent toute la
-      barre et il n'y tenait pas, donc il passe ici, en bandeau, où il a la
-      place d'être lu. Uniquement sur l'accueil, comme la version de l'en-tête.
-      La taille suit la largeur de l'écran, sans jamais passer à la ligne. */}
-  <p aria-hidden="true" class="xl:hidden container mx-auto px-4 pt-7 flex flex-col items-stretch select-none">
-    <span class="h-px bg-ink-900/20"></span>
-    <span class="font-display text-[clamp(1.15rem,5.4vw,2.25rem)] leading-none uppercase tracking-[0.3em] text-ink-900 text-center whitespace-nowrap py-3 pl-[0.3em]">
-      Two Old Wheels
-    </span>
-    <span class="h-px bg-ink-900/20"></span>
-  </p>
-
   <!-- Hero -->
   {/* La photo était posée en fond à 16 % d'opacité sous un dégradé quasi opaque :
       autant dire qu'elle n'existait pas. Elle est maintenant montrée, dans le
