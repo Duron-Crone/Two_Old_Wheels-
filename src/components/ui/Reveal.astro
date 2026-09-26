@@ -1,0 +1,32 @@
+---
+/**
+ * Apparition au scroll. Un seul geste pour tout le site : opacité + 1.75rem de
+ * remontée, sur la courbe `clack` (départ franc, arrêt net), déclenché une
+ * seule fois à 20 % de visibilité.
+ *
+ * Les styles `.reveal` et l'IntersectionObserver vivent dans BaseLayout, ce qui
+ * permet aussi de poser la classe `reveal` directement sur un élément existant
+ * quand un div supplémentaire casserait la grille.
+ *
+ * Le décalage passe par une classe et non par un attribut `style` : la CSP du
+ * site interdit le style inline, qu'aucune empreinte ne peut couvrir.
+ */
+const DELAY_CLASSES = {
+  0: '',
+  120: '[--reveal-delay:120ms]',
+  240: '[--reveal-delay:240ms]',
+  360: '[--reveal-delay:360ms]',
+  480: '[--reveal-delay:480ms]',
+} as const;
+
+interface Props {
+  delay?: keyof typeof DELAY_CLASSES;
+  class?: string;
+}
+
+const { delay = 0, class: className = '' } = Astro.props;
+---
+
+<div class:list={['reveal', DELAY_CLASSES[delay], className]}>
+  <slot />
+</div>

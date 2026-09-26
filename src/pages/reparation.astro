@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/ui/Breadcrumb.astro';
+import Button from '@/components/ui/Button.astro';
+import { breadcrumbSchema, motorcycleRepairSchema } from '@/utils/json-ld';
+import { lirePageReparation, lirePrestations, nommeurDeTransitions } from '@/lib/contenu';
+
+const page = await lirePageReparation();
+const prestations = await lirePrestations();
+const transition = nommeurDeTransitions();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Réparation' },
+  ]),
+  await motorcycleRepairSchema(),
+];
+---
+
+<BaseLayout
+  title={page.referencement.titre}
+  description={page.referencement.description}
+  canonical="/reparation"
+  jsonLd={jsonLd}
+>
+  <Breadcrumb items={[{ name: 'Accueil', url: '/' }, { name: 'Réparation' }]} />
+
+  <header class="container mx-auto px-4 pt-10 pb-16">
+    <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Prestations</p>
+    <h1 class="font-display text-4xl md:text-5xl text-ink-900 max-w-2xl">{page.titre}</h1>
+    <p class="mt-6 max-w-2xl text-ink-700 text-lg leading-relaxed">
+      {page.texte}
+    </p>
+  </header>
+
+  <section class="container mx-auto px-4 pb-24">
+    <div class="reveal grid gap-px bg-ink-900/15 border border-ink-900/15">
+      {prestations.map((prestation, index) => (
+        <article
+          id={prestation.ancre}
+          class="grid md:grid-cols-2 bg-paper-50 scroll-mt-28 lg:scroll-mt-32"
+        >
+          <div class:list={["relative", index % 2 === 1 ? 'md:order-2' : '']}>
+            <Image
+              src={prestation.photo}
+              alt={prestation.photo_description}
+              data-vt={transition(`service-${prestation.ancre}`)}
+              class="w-full h-64 md:h-full object-cover"
+              widths={[400, 700]}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          </div>
+          <div class:list={["p-8 md:p-12 flex flex-col justify-center", index % 2 === 1 ? 'md:order-1' : '']}>
+            <span class="font-mono text-xs text-rust-500 mb-3">N&deg; {String(index + 1).padStart(2, '0')}</span>
+            <h2 class="font-display text-2xl md:text-3xl text-ink-900 mb-4">{prestation.titre}</h2>
+            <p class="text-ink-700 leading-relaxed">{prestation.texte}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-paper-100 py-20 text-center border-t border-dashed border-ink-900/20">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl text-ink-900 mb-6">{page.appel.titre}</h2>
+      <p class="text-ink-700 max-w-xl mx-auto mb-8">
+        {page.appel.texte}
+      </p>
+      <Button href="/contact">Demander un devis</Button>
+    </div>
+  </section>
+</BaseLayout>

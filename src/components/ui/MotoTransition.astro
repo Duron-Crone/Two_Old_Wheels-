@@ -1,0 +1,249 @@
+---
+/**
+ * Une petite moto dessinée traverse l'écran à chaque changement de page, avec
+ * un pilote dessus. En fin de traversée elle se cabre et le pilote lève la main
+ * en V, juste avant de sortir par la droite.
+ *
+ * Elle ne retarde rien : elle roule par-dessus une page déjà chargée et
+ * utilisable, et n'attend aucun clic. Le but du site reste qu'on décroche son
+ * téléphone, pas qu'on regarde une animation.
+ *
+ * Elle démarre sur `astro:page-load` plutôt que pendant la transition : une
+ * transition de vue photographie la page, un élément qui s'anime pendant ce
+ * laps de temps se retrouverait figé dans l'instantané. Après la bascule, elle
+ * roule sur du DOM vivant, sans à-coup.
+ *
+ * Elle ne roule pas au premier chargement, seulement d'une page à l'autre.
+ */
+---
+
+<div id="moto" aria-hidden="true">
+  {/* Le dessin occupe la moitié basse de la boîte : la moitié haute est la
+      réserve dans laquelle le pilote et le cabré viennent tourner. */}
+  <svg viewBox="0 0 142 108" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    {/* `chassis` tourne d'un bloc autour du point de contact de la roue
+        arrière : c'est ce qui lève la roue avant. Les roues, elles, tournent
+        dans leur propre repère, à l'intérieur. */}
+    <g class="chassis">
+      {/* Formes primitives et séparées : à 2 cm, des masses qui se touchent
+          fusionnent en tache. Anneaux épais pour les roues (un rayonnage de
+          vélo se lirait bicyclette), ellipse pour le réservoir, bloc bas pour
+          le moteur. Pas de garde-boue : à cette taille ils ne font
+          qu'épaissir la roue sans rien ajouter. */}
+      <g class="roue">
+        <circle cx="31" cy="85" r="16" stroke-width="5.5" />
+        <circle cx="31" cy="85" r="3" fill="currentColor" stroke="none" />
+      </g>
+      <g class="roue">
+        <circle cx="113" cy="85" r="16" stroke-width="5.5" />
+        <circle cx="113" cy="85" r="3" fill="currentColor" stroke="none" />
+      </g>
+
+      <path d="M39 60 31 80" stroke-width="4" />
+      <path d="M92 59 82 72" stroke-width="4" />
+      <path d="M60 82 33 85" stroke-width="4" />
+      <path d="M76 85 46 88" stroke-width="3.5" />
+
+      <path d="M92 59 113 85" stroke-width="5.5" />
+      <path d="M92 59 94 47" stroke-width="4.5" />
+      <path d="M86 45 103 43" stroke-width="4.5" />
+      <circle cx="103" cy="58" r="5" stroke-width="3.5" />
+
+      <rect x="61" y="70" width="20" height="14" rx="3" fill="currentColor" stroke="none" />
+      <ellipse cx="74" cy="61" rx="15" ry="8.5" stroke-width="4.5" />
+      <rect x="33" y="54" width="28" height="6" rx="3" fill="currentColor" stroke="none" />
+
+      {/* Le pilote : une silhouette, rien de plus. À 2 cm, un visage ou des
+          plis de blouson ne feraient qu'une bouillie de pixels. */}
+      <g class="pilote">
+        <path d="M45 53 58 32" stroke-width="6.5" />
+        {/* La jambe descend dans la seule bande libre du dessin, entre la selle
+            et le moteur : passée sur le bloc moteur, elle s'y noyait et le
+            pilote paraissait sans jambes. Le pied s'arrête au carter. */}
+        <path d="M45 53 50 70 57 84" stroke-width="6.5" />
+        <path d="M57 84 65 85" stroke-width="5" />
+        <circle cx="64" cy="24" r="7.5" fill="currentColor" stroke="none" />
+
+        {/* Main sur le guidon pendant la traversée. */}
+        <g class="bras-guidon">
+          <path d="M58 32 72 38 88 43" stroke-width="5" />
+        </g>
+
+        {/* Bras levé, index et majeur écartés, pendant le cabré. Les deux bras
+            se relaient : un seul bras qui pivoterait promènerait ses doigts
+            devant le guidon pendant toute la traversée. */}
+        <g class="bras-v">
+          <path d="M58 32 52 21 56 14" stroke-width="5" />
+          <path d="M56 14 50 6.5" stroke-width="3" />
+          <path d="M56 14 62 7.5" stroke-width="3" />
+        </g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<style>
+  #moto {
+    position: fixed;
+    left: 0;
+    z-index: 30;
+    /* Deux centimètres, comme demandé. */
+    width: 2cm;
+    color: var(--moto-encre, #3d362c);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* Trois hauteurs de passage, tirées au sort : la moto se balade au lieu de
+     repasser au même endroit. La plus basse reste au-dessus de la barre
+     d'appel fixe du mobile. */
+  #moto.voie-1 { bottom: 14%; }
+  #moto.voie-2 { bottom: 27%; }
+  #moto.voie-3 { bottom: 41%; }
+
+  /* 3150 ms : la traversée tenait en 2200 ms, elle va 30 % moins vite. */
+  #moto.roule {
+    animation: moto-traverse 3150ms cubic-bezier(0.32, 0, 0.38, 1) both;
+  }
+
+  @keyframes moto-traverse {
+    0% {
+      opacity: 0;
+      transform: translateX(-3cm);
+    }
+    10%,
+    90% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(calc(100vw + 1cm));
+    }
+  }
+
+  /* Le cabré. L'axe est le point de contact de la roue arrière (31, 101 dans
+     le repère du dessin) : la moto pivote sur ce point comme sur le bitume,
+     au lieu de basculer autour de son centre. 22 degrés : au-delà, le bout des
+     doigts du pilote sortirait du cadre du dessin et serait coupé. */
+  #moto.roule .chassis {
+    transform-box: view-box;
+    transform-origin: 31px 101px;
+    animation: moto-cabre 3150ms cubic-bezier(0.34, 0.1, 0.2, 1) both;
+  }
+
+  @keyframes moto-cabre {
+    0%,
+    55% {
+      transform: rotate(0deg);
+    }
+    70%,
+    85% {
+      transform: rotate(-22deg);
+    }
+    96%,
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  /* Les deux bras se relaient au moment où la roue avant décolle. */
+  #moto.roule .bras-guidon {
+    animation: moto-bras-bas 3150ms steps(1, end) both;
+  }
+
+  #moto.roule .bras-v {
+    animation: moto-bras-haut 3150ms steps(1, end) both;
+  }
+
+  @keyframes moto-bras-bas {
+    0%,
+    57% {
+      opacity: 1;
+    }
+    58%,
+    94% {
+      opacity: 0;
+    }
+    95%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes moto-bras-haut {
+    0%,
+    57% {
+      opacity: 0;
+    }
+    58%,
+    94% {
+      opacity: 1;
+    }
+    95%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  #moto.roule .roue {
+    transform-box: fill-box;
+    transform-origin: center;
+    /* Les roues ralentissent dans la même proportion que la traversée :
+       sinon elles tourneraient trop vite pour l'avance et la moto patinerait. */
+    animation: moto-roue 915ms linear infinite;
+  }
+
+  @keyframes moto-roue {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Hors animation, c'est le bras sur le guidon qui est montré. */
+  .bras-v {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #moto.roule,
+    #moto.roule .chassis,
+    #moto.roule .roue,
+    #moto.roule .bras-guidon,
+    #moto.roule .bras-v {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // La moto ne roule qu'entre deux pages, jamais au premier affichage.
+  let navigation = false;
+
+  document.addEventListener('astro:before-preparation', () => {
+    navigation = true;
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    if (!navigation) return;
+
+    const moto = document.getElementById('moto');
+    if (!moto) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const voie = 1 + Math.floor(Math.random() * 3);
+    moto.classList.remove('roule', 'voie-1', 'voie-2', 'voie-3');
+    // Forcer un reflow, sinon retirer puis remettre la classe dans le même
+    // cycle ne redémarre pas l'animation.
+    void moto.offsetWidth;
+    moto.classList.add(`voie-${voie}`, 'roule');
+
+    moto.addEventListener(
+      'animationend',
+      (event) => {
+        if (event.target === moto) moto.classList.remove('roule');
+      },
+      { once: true },
+    );
+  });
+</script>

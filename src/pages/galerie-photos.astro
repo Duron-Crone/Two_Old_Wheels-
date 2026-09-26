@@ -1,0 +1,88 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/ui/Breadcrumb.astro';
+import Lightbox from '@/components/ui/Lightbox.astro';
+import { breadcrumbSchema, motorcycleRepairSchema } from '@/utils/json-ld';
+import { lireGalerie, lirePageGalerie, nommeurDeTransitions, nomPhoto } from '@/lib/contenu';
+
+const page = await lirePageGalerie();
+const photos = await lireGalerie();
+const transition = nommeurDeTransitions();
+
+// Chaque photo reçoit l'URL de sa plus grande variante : le déclencheur de la
+// visionneuse est un vrai lien, qui ouvre l'image même sans JavaScript. Le
+// script intercepte le clic quand il est disponible.
+const zoomUrls = await Promise.all(
+  photos.map(async (img) => (await getImage({ src: img.photo, format: 'webp' })).src),
+);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Galerie photos' },
+  ]),
+  await motorcycleRepairSchema(),
+];
+---
+
+<BaseLayout
+  title={page.referencement.titre}
+  description={page.referencement.description}
+  canonical="/galerie-photos"
+  jsonLd={jsonLd}
+>
+  <Breadcrumb items={[{ name: 'Accueil', url: '/' }, { name: 'Galerie photos' }]} />
+
+  <header class="container mx-auto px-4 pt-10 pb-12">
+    <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Galerie</p>
+    <h1 class="font-display text-4xl md:text-5xl text-ink-900 max-w-2xl">{page.titre}</h1>
+    <p class="mt-6 max-w-2xl text-ink-700 text-lg leading-relaxed">
+      {page.texte}
+    </p>
+  </header>
+
+  <section class="container mx-auto px-4 pb-24">
+    <div class="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+      {photos.map((img, index) => (
+        <figure
+          class:list={[
+            'reveal relative break-inside-avoid bg-white border border-ink-900/15 p-2',
+            'shadow-garage hover:shadow-garage-sm hover:translate-x-[3px] hover:translate-y-[3px]',
+            'transition-all duration-200 ease-clack',
+            // Cascade sur la ligne visuelle, pas sur l'ordre du DOM : en masonry
+            // a trois colonnes, les index 0-1-2 sont cote a cote a l'ecran.
+            ['', '[--reveal-delay:120ms]', '[--reveal-delay:240ms]'][index % 3],
+          ]}
+        >
+          <Image
+            src={img.photo}
+            alt={img.description}
+            data-vt={transition(`photo-${nomPhoto(img.photo)}`)}
+            class="w-full h-auto"
+            widths={[300, 500, 700]}
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            loading={index < 2 ? 'eager' : 'lazy'}
+          />
+          <figcaption class="px-1.5 pt-2 pb-1">
+            <span class="block font-mono text-[0.62rem] uppercase tracking-[0.15em] text-rust-500">{img.categorie}</span>
+            <span class="block text-sm text-ink-700 mt-0.5">{img.description}</span>
+          </figcaption>
+
+          {/* Le bouton recouvre toute la carte : la zone qui réagit au survol
+              est exactement celle qui se clique. La carte garde ses balises
+              figure/figcaption, que le référencement des images exploite. */}
+          <a
+            href={zoomUrls[index]}
+            data-zoom
+            data-zoom-category={img.categorie}
+            aria-label={`Agrandir la photo : ${img.description}`}
+            class="absolute inset-0 w-full h-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rust-500"
+          ></a>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <Lightbox />
+</BaseLayout>

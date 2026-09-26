@@ -1,0 +1,249 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import Reveal from '@/components/ui/Reveal.astro';
+import { motorcycleRepairSchema, websiteSchema, faqSchema } from '@/utils/json-ld';
+import {
+  lireFaq,
+  lireGalerie,
+  lirePageAccueil,
+  lirePrestations,
+  nommeurDeTransitions,
+  nomPhoto,
+} from '@/lib/contenu';
+
+const page = await lirePageAccueil();
+const prestations = await lirePrestations();
+const apercuGalerie = (await lireGalerie()).slice(0, 4);
+const faq = await lireFaq();
+const transition = nommeurDeTransitions();
+
+const jsonLd = [await motorcycleRepairSchema(), websiteSchema(), faqSchema(faq)];
+---
+
+<BaseLayout
+  title={page.referencement.titre}
+  description={page.referencement.description}
+  canonical="/"
+  jsonLd={jsonLd}
+>
+  {/* Le nom façon générique de film. Il vit dans l'en-tête à partir de 1280 px
+      (cf. Navigation.astro) ; en dessous, le logo et le menu occupent toute la
+      barre et il n'y tenait pas, donc il passe ici, en bandeau, où il a la
+      place d'être lu. Uniquement sur l'accueil, comme la version de l'en-tête.
+      La taille suit la largeur de l'écran, sans jamais passer à la ligne. */}
+  <p aria-hidden="true" class="xl:hidden container mx-auto px-4 pt-7 flex flex-col items-stretch select-none">
+    <span class="h-px bg-ink-900/20"></span>
+    <span class="font-display text-[clamp(1.15rem,5.4vw,2.25rem)] leading-none uppercase tracking-[0.3em] text-ink-900 text-center whitespace-nowrap py-3 pl-[0.3em]">
+      Two Old Wheels
+    </span>
+    <span class="h-px bg-ink-900/20"></span>
+  </p>
+
+  <!-- Hero -->
+  {/* La photo était posée en fond à 16 % d'opacité sous un dégradé quasi opaque :
+      autant dire qu'elle n'existait pas. Elle est maintenant montrée, dans le
+      cadre blanc à ombre dure qui sert de traitement photo sur tout le site.
+
+      Elle n'est volontairement pas en pleine largeur : le fichier fait 668 px,
+      étiré sur 1440 il serait franchement mou. Contenue autour de 560 px, il
+      reste de la marge de définition. C'est la vraie limite du site aujourd'hui,
+      et elle ne se lèvera qu'avec de vraies photos. */}
+  <section class="relative overflow-hidden border-b border-dashed border-ink-900/20">
+    <div class="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+      <div class="grid lg:grid-cols-[1fr_minmax(0,34rem)] gap-10 lg:gap-14 items-center">
+        <figure class="hero-photo order-1 lg:order-2 bg-white border border-ink-900/15 p-2.5 shadow-garage">
+          <Image
+            src={page.hero.photo}
+            alt={page.hero.photo_description}
+            class="w-full h-56 sm:h-72 lg:h-auto object-cover"
+            widths={[400, 668]}
+            sizes="(min-width: 1024px) 34rem, 100vw"
+            priority
+          />
+          {page.hero.legende && (
+            <figcaption class="font-mono text-[0.68rem] uppercase tracking-wide text-ink-500 pt-2.5 px-1">
+              {page.hero.legende}
+            </figcaption>
+          )}
+        </figure>
+
+        <div class="hero-box relative order-2 lg:order-1 border border-dashed border-ink-900/25 px-6 py-10 md:px-10 md:py-12">
+          <span class="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-rust-500" aria-hidden="true"></span>
+          <span class="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-rust-500" aria-hidden="true"></span>
+          <span class="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-rust-500" aria-hidden="true"></span>
+          <span class="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-rust-500" aria-hidden="true"></span>
+
+          <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-5">
+            Atelier moto · Saint-Martin-d'Uriage
+          </p>
+          <h1 class="font-display text-4xl md:text-5xl xl:text-6xl text-ink-900 leading-[1.05]">
+            {page.hero.titre}
+          </h1>
+          <p class="mt-6 text-ink-700 text-lg">
+            {page.hero.texte}
+          </p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <Button href="/contact">Me contacter</Button>
+            <Button href="/reparation" variant="outline">Voir les prestations</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Histoire -->
+  <section class="container mx-auto px-4 py-20 md:py-28">
+    <div class="reveal grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">L'atelier</p>
+        <h2 class="font-display text-3xl md:text-4xl text-ink-900 mb-6">{page.atelier.titre}</h2>
+        <div class="space-y-4">
+          {page.atelier.paragraphes.map((paragraphe) => (
+            <p class="text-ink-700 leading-relaxed">{paragraphe}</p>
+          ))}
+        </div>
+      </div>
+      <figure class="border border-ink-900/15 bg-white p-3 shadow-garage">
+        <Image src={page.atelier.photo} alt={page.atelier.photo_description} data-vt={transition(`photo-${nomPhoto(page.atelier.photo)}`)} class="w-full h-auto" widths={[400, 700]} sizes="(min-width: 768px) 50vw, 100vw" />
+        {page.atelier.legende && (
+          <figcaption class="font-mono text-[0.68rem] uppercase tracking-wide text-ink-500 pt-3 px-1">
+            {page.atelier.legende}
+          </figcaption>
+        )}
+      </figure>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="bg-paper-100 py-20 md:py-28 border-y border-dashed border-ink-900/20">
+    <div class="container mx-auto px-4">
+      <div class="reveal flex flex-col items-center text-center mb-14">
+        <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Prestations</p>
+        <h2 class="font-display text-3xl md:text-4xl text-ink-900">{page.prestations.titre}</h2>
+      </div>
+
+      <div class="reveal [--reveal-delay:120ms] grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink-900/15 border border-ink-900/15">
+        {prestations.map((prestation, index) => (
+          <article class="bg-paper-50 group relative">
+            {/* Le survol agrandit la photo : la carte entière doit donc mener
+                quelque part. Elle pointe sur le détail de la prestation. */}
+            <a
+              href={`/reparation#${prestation.ancre}`}
+              class="absolute inset-0 z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-rust-500"
+            ><span class="sr-only">{prestation.titre} : voir le détail</span></a>
+            <div class="flex items-center justify-between px-5 pt-4">
+              <span class="font-mono text-xs text-rust-500">N&deg; {String(index + 1).padStart(2, '0')}</span>
+              
+            </div>
+            <div class="overflow-hidden mt-3 mx-5 border border-ink-900/10">
+              <Image
+                src={prestation.photo}
+                alt={prestation.photo_description}
+                data-vt={transition(`service-${prestation.ancre}`)}
+                class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-350 ease-clack"
+                widths={[300, 500]}
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-5">
+              <h3 class="font-display text-2xl text-ink-900 mb-2">{prestation.titre}</h3>
+              <p class="text-sm text-ink-700 leading-relaxed">{prestation.texte}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Vente teaser -->
+  <section class="container mx-auto px-4 py-20 md:py-28">
+    <div class="reveal grid md:grid-cols-2 gap-12 items-center">
+      <figure class="border border-ink-900/15 bg-white p-3 shadow-garage order-2 md:order-1">
+        <Image src={page.vente.photo} alt={page.vente.photo_description} data-vt={transition(`photo-${nomPhoto(page.vente.photo)}`)} class="w-full h-auto" widths={[400, 700]} sizes="(min-width: 768px) 50vw, 100vw" loading="lazy" />
+        {page.vente.legende && (
+          <figcaption class="font-mono text-[0.68rem] uppercase tracking-wide text-ink-500 pt-3 px-1">
+            {page.vente.legende}
+          </figcaption>
+        )}
+      </figure>
+      <div class="order-1 md:order-2">
+        <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Vente et dépôt-vente</p>
+        <h2 class="font-display text-3xl md:text-4xl text-ink-900 mb-6">{page.vente.titre}</h2>
+        <p class="text-ink-700 leading-relaxed mb-4">
+          {page.vente.texte}
+        </p>
+        <Button href="/vente" variant="outline">Voir les motos</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Galerie preview -->
+  <section class="bg-paper-100 py-20 md:py-28 border-y border-dashed border-ink-900/20">
+    <div class="container mx-auto px-4">
+      <div class="reveal flex items-end justify-between mb-10 flex-wrap gap-4">
+        <div>
+          <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Galerie</p>
+          <h2 class="font-display text-3xl md:text-4xl text-ink-900">{page.galerie.titre}</h2>
+        </div>
+        <Button href="/galerie-photos" variant="outline">Voir toute la galerie</Button>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {apercuGalerie.map((img, index) => (
+          <figure
+            class:list={[
+              'reveal relative overflow-hidden border border-ink-900/15 group bg-white',
+              'shadow-garage hover:shadow-garage-sm hover:translate-x-[3px] hover:translate-y-[3px]',
+              'transition-all duration-200 ease-clack',
+              ['', '[--reveal-delay:120ms]', '[--reveal-delay:240ms]', '[--reveal-delay:360ms]'][index],
+            ]}
+          >
+            {/* Aperçu : la carte mène à la galerie complète, où la même photo
+                s'ouvre en plein écran. */}
+            <a
+              href="/galerie-photos"
+              class="absolute inset-0 z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-rust-500"
+            ><span class="sr-only">{img.categorie} : voir la galerie photos</span></a>
+            <Image src={img.photo} alt={img.description} data-vt={transition(`photo-${nomPhoto(img.photo)}`)} class="w-full h-48 object-cover" widths={[300, 400]} sizes="(min-width: 768px) 25vw, 50vw" loading="lazy" />
+            <figcaption class="absolute inset-x-0 bottom-0 bg-ink-900/80 text-paper-100 font-mono text-[0.62rem] uppercase tracking-wide px-2 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-clack">
+              {img.categorie}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="container mx-auto px-4 py-20 md:py-28">
+    <div class="reveal max-w-2xl mx-auto">
+      <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">FAQ</p>
+      <h2 class="font-display text-3xl md:text-4xl text-ink-900 mb-10">{page.faq.titre}</h2>
+      <dl class="divide-y divide-dashed divide-ink-900/20 border-t border-b border-dashed border-ink-900/20">
+        {faq.map((item, index) => (
+          <div class="py-6">
+            <dt class="flex gap-4 font-display text-xl text-ink-900">
+              <span class="font-mono text-sm text-rust-500 pt-1 shrink-0">{String(index + 1).padStart(2, '0')}</span>
+              <span class="min-w-0">{item.question}</span>
+            </dt>
+            <dd class="mt-2 pl-9 text-ink-700 leading-relaxed">{item.reponse}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="container mx-auto px-4 py-24 md:py-28 text-center">
+    <Reveal>
+    <h2 class="font-display text-3xl md:text-5xl text-ink-900 mb-6">{page.appel.titre}</h2>
+    <p class="text-ink-700 max-w-xl mx-auto mb-8">
+      {page.appel.texte}
+    </p>
+    <Button href="/contact">Me contacter</Button>
+    </Reveal>
+  </section>
+</BaseLayout>

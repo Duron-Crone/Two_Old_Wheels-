@@ -1,0 +1,105 @@
+---
+import { Image } from 'astro:assets';
+import { NAV_LINKS, SITE } from '@/consts';
+import logo from '@/assets/images/logo.png';
+import { cheminPublic } from '@/utils/chemin';
+
+const currentPath = cheminPublic(Astro.url.pathname);
+
+// Le titre n'apparaît que sur l'accueil. L'en-tête étant persistant d'une page à
+// l'autre, l'état de départ est rendu ici et le script de BaseLayout le met à
+// jour ensuite, comme il le fait pour l'onglet actif.
+const isHome = currentPath === '/';
+---
+
+{/* `transition:persist` : l'en-tête collant survit aux navigations sans se
+    redessiner. La clé est nommée explicitement : sans nom, Astro en génère une
+    à partir de la position de l'élément dans la page, qui diffère d'une page à
+    l'autre. Les clés ne se correspondaient plus et rien ne persistait, sans que
+    rien ne le signale.
+
+    L'état actif est resynchronisé en JS dans BaseLayout, sinon il resterait
+    figé sur la page précédente. */}
+<header
+  transition:persist="entete"
+  class="sticky top-0 z-40 bg-paper-50/95 backdrop-blur border-b border-ink-900/15"
+>
+  <div class="container mx-auto px-4 flex items-center justify-between h-24 lg:h-28">
+    <a href="/" class="flex items-center gap-3 shrink-0">
+      {/* 64 px de haut sur mobile, 88 px sur grand écran : en dessous, l'inscription
+          manuscrite « Two Old Wheels » en haut du logo n'est plus lisible. */}
+      <Image src={logo} alt={SITE.name} width={173} height={88} densities={[1, 2]} loading="eager" class="h-16 lg:h-[5.5rem] w-auto" />
+      <span class="hidden sm:inline-block font-mono text-[0.65rem] uppercase tracking-[0.15em] text-ink-500 border-l border-ink-900/20 pl-3 leading-tight">
+        Atelier moto<br />depuis 2021
+      </span>
+    </a>
+
+    {/* Le nom façon générique de film : capitales condensées très espacées,
+        serrées entre deux filets. Masqué sous 1280 px, où le menu et le logo
+        occupent déjà toute la largeur. Le logo l'annonce déjà aux lecteurs
+        d'écran, d'où `aria-hidden`. */}
+    <p
+      data-cine-title
+      aria-hidden="true"
+      class:list={[
+        'hidden xl:flex flex-col items-stretch min-w-0 select-none mx-6 2xl:mx-10',
+        !isHome && 'is-hidden',
+      ]}
+    >
+      <span class="h-px bg-ink-900/20"></span>
+      <span class="font-display text-[1.3rem] 2xl:text-[1.7rem] leading-none uppercase tracking-[0.3em] 2xl:tracking-[0.4em] text-ink-900 text-center whitespace-nowrap py-2 pl-[0.3em] 2xl:pl-[0.4em]">
+        Two Old Wheels
+      </span>
+      <span class="h-px bg-ink-900/20"></span>
+    </p>
+
+    <nav aria-label="Navigation principale" class="hidden lg:flex items-center gap-1 shrink-0">
+      {NAV_LINKS.map((link, i) => {
+        const isActive = (link.href.replace(/\/+$/, '') || '/') === currentPath;
+        return (
+          <a
+            href={link.href}
+            data-nav-link
+            aria-current={isActive ? 'page' : undefined}
+            class:list={[
+              'flex items-center gap-1.5 px-3 py-2 text-sm font-semibold uppercase tracking-wide whitespace-nowrap transition-colors duration-200 ease-clack hover:text-rust-500',
+              isActive ? 'text-rust-500' : 'text-ink-700',
+            ]}
+          >
+            <span aria-hidden="true" class="font-mono text-[0.65rem] text-ink-300">{String(i).padStart(2, '0')}</span>
+            {link.label}
+          </a>
+        );
+      })}
+    </nav>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Ouvrir le menu"
+      class="lg:hidden inline-flex items-center justify-center w-11 h-11 text-ink-700 hover:text-rust-500 transition-colors duration-200 ease-clack"
+    >
+      <svg id="icon-open" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg id="icon-close" class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="lg:hidden hidden border-t border-ink-900/15 bg-paper-50" aria-live="polite">
+    <nav aria-label="Navigation mobile" class="flex flex-col px-4 py-4 gap-1">
+      {NAV_LINKS.map((link) => (
+        <a
+          href={link.href}
+          class="py-3 text-base font-semibold uppercase tracking-wide text-ink-700 hover:text-rust-500 border-b border-ink-900/10 last:border-0 transition-colors duration-200 ease-clack"
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

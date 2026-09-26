@@ -1,0 +1,32 @@
+# Dépendances
+node_modules/
+
+# Cache & build
+.astro/
+dist/
+.cache/
+.wrangler/
+*.log
+
+# Environnement & config locale
+.env
+.DS_Store
+
+# Aperçu partageable généré par scripts/build-preview.mjs
+dist-preview/
+
+# Page de couverture de l aperçu partageable (source, à versionner)
+!preview/
+
+# Fichier HTML unique à envoyer (scripts/build-offline.mjs)
+dist-offline/
+
+# Apache de la recette locale (scripts/apache.mjs)
+.apache/
+
+# Documentation interne : procédures, accès, guide de l'atelier.
+# Reste sur le poste, hors du dépôt.
+interne/
+
+# Page de couverture de l ancien aperçu envoyé par mail, gardée hors du dépôt.
+preview/

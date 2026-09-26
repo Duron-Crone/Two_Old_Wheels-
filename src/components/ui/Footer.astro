@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import { SITE } from '@/consts';
+import { lireReglages, telephoneInternational } from '@/lib/contenu';
+import logoOnDark from '@/assets/images/logo-on-dark.png';
+
+const reglages = await lireReglages();
+---
+
+<footer class="mt-28 bg-ink-900 text-paper-200 relative overflow-hidden">
+  <div class="absolute top-0 inset-x-0 h-1 bg-rust-500"></div>
+  <div class="container mx-auto px-4 py-16">
+    <div class="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr]">
+      <div>
+        <Image src={logoOnDark} alt={SITE.name} width={126} height={64} densities={[1, 2]} class="h-16 w-auto mb-4" />
+        <p class="text-sm text-paper-200/60 max-w-xs leading-relaxed">{reglages.accroche}</p>
+      </div>
+
+      <div class="text-sm">
+        <p class="eyebrow font-mono text-[0.7rem] uppercase tracking-[0.15em] text-rust-400 mb-3">Atelier</p>
+        <address class="not-italic text-paper-200/70 leading-relaxed">
+          {SITE.address.street}<br />
+          {SITE.address.postalCode} {SITE.address.city}
+        </address>
+        {reglages.telephone && (
+          <a href={`tel:${telephoneInternational(reglages.telephone)}`} class="mt-1 inline-flex items-center min-h-[44px] text-paper-200/70 hover:text-white transition-colors duration-200 ease-clack">
+            {reglages.telephone}
+          </a>
+        )}
+      </div>
+
+      <div class="text-sm">
+        <p class="eyebrow font-mono text-[0.7rem] uppercase tracking-[0.15em] text-rust-400 mb-3">Me suivre</p>
+        <div class="flex flex-col">
+          {reglages.instagram && (
+            <a href={reglages.instagram} target="_blank" rel="noopener noreferrer" class="inline-flex items-center min-h-[44px] text-paper-200/70 hover:text-white transition-colors duration-200 ease-clack">
+              Instagram
+            </a>
+          )}
+          {reglages.facebook && (
+            <a href={reglages.facebook} target="_blank" rel="noopener noreferrer" class="inline-flex items-center min-h-[44px] text-paper-200/70 hover:text-white transition-colors duration-200 ease-clack">
+              Facebook
+            </a>
+          )}
+          <a href="/contact" class="inline-flex items-center min-h-[44px] text-paper-200/70 hover:text-white transition-colors duration-200 ease-clack">
+            Me contacter
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-dashed border-paper-200/20 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="font-mono text-[0.7rem] text-paper-200/60">
+        &copy; {new Date().getFullYear()} {SITE.name}. Tous droits réservés.
+      </p>
+      <a href="/mentions-legales" class="inline-flex items-center min-h-[44px] font-mono text-[0.7rem] uppercase tracking-wide text-paper-200/60 hover:text-rust-400 transition-colors duration-200 ease-clack">
+        Mentions légales
+      </a>
+    </div>
+  </div>
+</footer>

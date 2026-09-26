@@ -1,0 +1,13 @@
+# Astro met une empreinte dans le nom des fichiers de ce dossier : leur contenu
+# ne change jamais à adresse constante, ils peuvent être mis en cache
+# définitivement.
+#
+# Cette règle est ici, et pas dans le .htaccess de la racine, parce qu'y viser ce
+# seul dossier demanderait un bloc <If> : une directive refusée par l'hébergeur
+# renverrait une erreur 500 sur tout le site, pas seulement sur ce dossier.
+#
+# Le dossier n'existe pas dans les sources : Astro le crée au build et y range
+# ses fichiers, à côté de celui-ci.
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</IfModule>

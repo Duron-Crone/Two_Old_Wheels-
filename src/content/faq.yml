@@ -1,0 +1,15 @@
+questions:
+  - question: Sur quelles motos travaillez-vous ?
+    reponse: "Toutes marques et tous types : routières, roadsters, sportives, cruisers, customs, tout-terrain. Ma spécialité, ce sont les anciennes et les vintage, japonaises comme anglaises ou américaines."
+  - question: Faites-vous l'entretien et la restauration ?
+    reponse: "Oui, de la vidange à la restauration complète. Dites-moi ce que vous comptez faire de la moto, rouler tous les jours ou la sortir le dimanche : on part de là."
+  - question: Ma moto ne roule plus depuis des années, est-ce récupérable ?
+    reponse: Souvent oui. Envoyez-moi quelques photos, du moteur et de la partie cycle, et je vous dis ce que j'en pense avant même que vous la déplaciez.
+  - question: Faites-vous de la préparation et du custom ?
+    reponse: "Oui : cafe racer, bobber, scrambler ou modifications sur mesure. On en parle d'abord à l'atelier, la moto sous les yeux, c'est là qu'on voit ce qui est possible."
+  - question: Vendez-vous des motos ?
+    reponse: Oui, en vente et en dépôt-vente, surtout des anciennes et des vintage. Chacune passe sur mon pont avant d'être proposée.
+  - question: Où se trouve l'atelier ?
+    reponse: Au {adresse}, au pied de Belledonne, au-dessus de Grenoble.
+  - question: Comment vous contacter ?
+    reponse: Par téléphone au {telephone}, ou par message sur Instagram ou Facebook avec une photo de votre moto. Appelez avant de passer à l'atelier.

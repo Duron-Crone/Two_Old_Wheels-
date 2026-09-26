@@ -1,0 +1,73 @@
+---
+import { lireReglages, telephoneInternational } from '@/lib/contenu';
+
+const { telephone } = await lireReglages();
+const lien = `tel:${telephoneInternational(telephone)}`;
+---
+
+<a
+  href={lien}
+  transition:persist="cta-appel-bureau"
+  class="fixed right-0 top-1/2 -translate-y-1/2 z-50 group hidden lg:flex"
+  aria-label={`M'appeler au ${telephone}`}
+>
+  <div
+    class="relative flex flex-col items-center justify-center bg-rust-500 text-white px-4 py-8 shadow-[0_0_40px_rgba(189,53,23,0.45)] border-l-4 border-rust-400 animate-cta-pulse hover:bg-rust-400 hover:scale-105 transition-all duration-200 ease-clack cursor-pointer"
+  >
+    <span class="w-2.5 h-2.5 rounded-full bg-white animate-cta-blink mb-3" aria-hidden="true"></span>
+    <span
+      class="font-display text-2xl tracking-[0.15em] uppercase leading-tight text-center [writing-mode:vertical-rl] [text-orientation:mixed]"
+    >
+      M'appeler
+    </span>
+  </div>
+</a>
+
+<a
+  href={lien}
+  transition:persist="cta-appel-mobile"
+  class="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+  aria-label={`M'appeler au ${telephone}`}
+>
+  <div
+    class="flex items-center justify-center gap-2 bg-rust-500 text-white px-3 py-3 shadow-[0_-4px_20px_rgba(189,53,23,0.5)] animate-cta-pulse hover:bg-rust-400 transition-colors duration-200 ease-clack"
+  >
+    <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+    </svg>
+    <span class="font-display text-base sm:text-lg tracking-wide uppercase whitespace-nowrap">M'appeler</span>
+  </div>
+</a>
+
+<style>
+  @keyframes cta-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.15;
+    }
+  }
+  .animate-cta-blink {
+    animation: cta-blink 1.2s step-end infinite;
+  }
+
+  @keyframes cta-pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.04);
+    }
+  }
+  .animate-cta-pulse {
+    animation: cta-pulse 2.5s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-cta-blink,
+    .animate-cta-pulse {
+      animation: none !important;
+    }
+  }
+</style>

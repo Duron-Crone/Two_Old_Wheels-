@@ -1,0 +1,34 @@
+hero:
+  titre: Je remets vos motos anciennes sur la route.
+  texte: "Réparation, entretien, restauration et préparation sur mesure, toutes marques. 25 ans de mécanique, dans mon atelier de Saint-Martin-d'Uriage, au pied de Belledonne."
+  photo: /src/assets/photos/partie-cycle-bobber.jpg
+  photo_description: Châssis de bobber en restauration sur le pont de mon atelier
+  legende: Projet bobber en cours à l'atelier
+atelier:
+  titre: 25 ans de mécanique, un atelier depuis 2021
+  paragraphes:
+    - J'ai passé 25 ans les mains dans la mécanique avant d'ouvrir Two Old Wheels en 2021, à Saint-Martin-d'Uriage, au-dessus de Grenoble.
+    - "Ce sont les anciennes qui m'intéressent le plus : une japonaise des années 70, une anglaise, une américaine, chacune a sa logique et ses habitudes. Je prends aussi les modèles récents, toutes marques."
+    - Sur une moto ancienne, la pièce d'origine ne se trouve pas toujours. On en parle avant de commencer, et je vous dis franchement ce qui est faisable et ce qui ne l'est pas.
+    - "La préparation, c'est l'autre moitié du métier : cafe racer, bobber, scrambler, ou simplement une selle et un guidon qui vous vont mieux. Vous arrivez avec une idée, on la met au point ensemble."
+  photo: /src/assets/photos/atelier-yamaha-vintage.jpg
+  photo_description: Yamaha XT bleue des années 1990
+  legende: Yamaha XT, années 1990
+prestations:
+  titre: Ce que je fais à l'atelier
+vente:
+  titre: Des motos anciennes vérifiées à l'atelier
+  texte: "Je vends et je prends en dépôt-vente des motos anciennes et vintage : routières, roadsters, cruisers, customs, tout-terrain. Chacune passe sur mon pont avant d'être proposée. Ce que je vends, je l'ai regardé."
+  photo: /src/assets/photos/vente-harley-sportster.jpg
+  photo_description: Harley-Davidson Sportster 883 gris argent, garée devant mon atelier
+  legende: Harley-Davidson Sportster 883
+galerie:
+  titre: Mes dernières réalisations
+faq:
+  titre: Questions fréquentes
+appel:
+  titre: Une moto à réparer ou un projet ?
+  texte: Appelez-moi, ou envoyez-moi une photo de votre moto avec deux mots sur ce qui se passe. Je vous dis ce que j'en pense et on fixe un rendez-vous.
+referencement:
+  titre: "Two Old Wheels : réparation moto vintage à Uriage (Isère)"
+  description: Réparation, entretien, restauration et custom de motos anciennes à Saint-Martin-d'Uriage, près de Grenoble. Toutes marques. Vente et dépôt-vente.

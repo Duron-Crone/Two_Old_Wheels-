@@ -1,0 +1,48 @@
+{
+  "name": "two-old-wheels",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "serve:prod": "astro build && node scripts/apache.mjs",
+    "recette": "astro build && node scripts/apache.mjs -- node scripts/verify.mjs",
+    "build:offline": "astro build && node scripts/build-offline.mjs",
+    "verify": "node scripts/verify.mjs",
+    "check:cms": "node scripts/check-cms.mjs",
+    "audit:ui": "node scripts/audit-ui.mjs",
+    "audit:a11y": "node scripts/audit-a11y.mjs",
+    "audit:perf": "node scripts/audit-perf.mjs",
+    "audit:securite": "node scripts/audit-securite.mjs",
+    "audit:lightbox": "node scripts/audit-lightbox.mjs",
+    "audit:moto": "node scripts/audit-moto.mjs",
+    "audit:offline": "node scripts/audit-offline.mjs",
+    "audit:admin": "node scripts/audit-admin.mjs",
+    "check": "astro check",
+    "audit": "npm audit --omit=dev",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.0.0",
+    "@astrojs/tailwind": "^6.0.2",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
+    "@fontsource/work-sans": "^5.3.0",
+    "@sveltia/cms": "0.213.5",
+    "astro": "^5.0.0",
+    "sharp": "^0.35.4",
+    "tailwindcss": "^3.4.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^20.0.0",
+    "ajv": "^8.20.0",
+    "puppeteer": "^24.43.1",
+    "typescript": "^5.5.0",
+    "yaml": "^2.9.0"
+  },
+  "overrides": {
+    "sharp": "^0.35.4"
+  }
+}

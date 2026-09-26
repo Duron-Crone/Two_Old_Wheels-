@@ -1,0 +1,16 @@
+motos:
+  - photo: /src/assets/photos/vente-honda-vt.jpg
+    description: Honda Shadow VT bordeaux
+    titre: ""
+    prix: ""
+    vendue: false
+  - photo: /src/assets/photos/vente-dax.jpg
+    description: Honda Dax rouge
+    titre: ""
+    prix: ""
+    vendue: false
+  - photo: /src/assets/photos/vente-harley-sportster.jpg
+    description: Harley-Davidson Sportster 883 gris argent
+    titre: ""
+    prix: ""
+    vendue: false

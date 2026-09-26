@@ -1,0 +1,110 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/ui/Breadcrumb.astro';
+import EmailProtege from '@/components/ui/EmailProtege.astro';
+import { SITE } from '@/consts';
+import { breadcrumbSchema, motorcycleRepairSchema } from '@/utils/json-ld';
+import {
+  adresseComplete,
+  horairesLisibles,
+  lirePageContact,
+  lireReglages,
+  remplir,
+  telephoneInternational,
+} from '@/lib/contenu';
+
+const page = await lirePageContact();
+const reglages = await lireReglages();
+const horaires = horairesLisibles(reglages);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Contact' },
+  ]),
+  await motorcycleRepairSchema(),
+];
+
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresseComplete())}`;
+---
+
+<BaseLayout
+  title={remplir(page.referencement.titre, reglages)}
+  description={remplir(page.referencement.description, reglages)}
+  canonical="/contact"
+  jsonLd={jsonLd}
+  hideCta
+>
+  <Breadcrumb items={[{ name: 'Accueil', url: '/' }, { name: 'Contact' }]} />
+
+  <header class="container mx-auto px-4 pt-10 pb-12">
+    <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Contact</p>
+    <h1 class="font-display text-4xl md:text-5xl text-ink-900 max-w-2xl">{page.titre}</h1>
+    <p class="mt-6 max-w-2xl text-ink-700 text-lg leading-relaxed">
+      {remplir(page.texte, reglages)}
+    </p>
+  </header>
+
+  <section class="reveal container mx-auto px-4 pb-24 grid md:grid-cols-2 gap-px bg-ink-900/15 border border-ink-900/15">
+    <div class="bg-paper-50 p-8">
+      <span class="font-mono text-xs text-rust-500 mb-3 block">N&deg; 01</span>
+      <h2 class="font-display text-2xl text-ink-900 mb-4">{page.telephone.titre}</h2>
+
+      {reglages.telephone && (
+        <a
+          href={`tel:${telephoneInternational(reglages.telephone)}`}
+          class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 mb-6 text-sm font-semibold uppercase tracking-wide bg-rust-500 text-white shadow-garage-sm hover:bg-rust-400 transition-colors duration-200 ease-clack"
+        >
+          Appeler le {reglages.telephone}
+        </a>
+      )}
+
+      <address class="not-italic text-ink-700 space-y-1 mb-4">
+        <p class="font-semibold text-ink-900">{SITE.name}</p>
+        <p>{SITE.address.street}</p>
+        <p>{SITE.address.postalCode} {SITE.address.city}</p>
+      </address>
+      {horaires.length > 0 && (
+        <ul class="text-ink-700 space-y-1 mb-4">
+          {horaires.map((ligne) => <li>{ligne}</li>)}
+        </ul>
+      )}
+      {page.telephone.consigne && <p class="text-sm text-ink-500 mb-2">{remplir(page.telephone.consigne, reglages)}</p>}
+      <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center min-h-[44px] text-rust-500 hover:text-rust-600 underline underline-offset-4 text-sm font-semibold">
+        Ouvrir dans Google Maps
+      </a>
+
+      {reglages.email && <EmailProtege email={reglages.email} />}
+    </div>
+
+    <div class="bg-paper-50 p-8">
+      <span class="font-mono text-xs text-rust-500 mb-3 block">N&deg; 02</span>
+      <h2 class="font-display text-2xl text-ink-900 mb-4">{page.reseaux.titre}</h2>
+      <p class="text-ink-700 mb-6">
+        {remplir(page.reseaux.texte, reglages)}
+      </p>
+      <div class="flex flex-col gap-3">
+        {reglages.instagram && (
+        <a
+          href={reglages.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold uppercase tracking-wide border-2 border-ink-900/30 text-ink-700 hover:border-rust-500 hover:text-rust-500 transition-colors duration-200 ease-clack"
+        >
+          Écrire sur Instagram
+        </a>
+        )}
+        {reglages.facebook && (
+        <a
+          href={reglages.facebook}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold uppercase tracking-wide border-2 border-ink-900/30 text-ink-700 hover:border-rust-500 hover:text-rust-500 transition-colors duration-200 ease-clack"
+        >
+          Écrire sur Facebook
+        </a>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

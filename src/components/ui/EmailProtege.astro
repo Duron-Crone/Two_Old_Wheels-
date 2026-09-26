@@ -1,0 +1,67 @@
+---
+/**
+ * L'adresse e-mail, montrée aux visiteurs mais pas aux robots.
+ *
+ * Aucun `mailto:` et aucune adresse lisible ne partent dans le HTML : la page
+ * ne contient que les deux moitiés de l'adresse encodées en base64, et rien ne
+ * les assemble tant que le visiteur n'a pas cliqué. Les moissonneurs d'adresses,
+ * qui lisent le HTML au passage, ne trouvent donc rien à cette adresse, et un
+ * robot qui exécute le JavaScript ne verra toujours rien sans ce clic.
+ *
+ * L'adresse est également tenue à l'écart des fichiers destinés aux machines :
+ * ni dans les données structurées (src/utils/json-ld.ts), ni dans llms.txt.
+ * `npm run verify` échoue si elle réapparaît quelque part dans le site.
+ *
+ * Sans JavaScript, rien ne s'affiche du tout : le téléphone et les réseaux
+ * sociaux restent là, et ce sont les voies que Guillaume préfère.
+ */
+interface Props {
+  email: string;
+  libelle?: string;
+}
+
+const { email, libelle = "M'écrire un e-mail" } = Astro.props;
+const [utilisateur, domaine] = email.split('@');
+const encoder = (valeur: string) => Buffer.from(valeur, 'utf8').toString('base64');
+---
+
+<p
+  data-email-protege
+  data-u={encoder(utilisateur)}
+  data-d={encoder(domaine ?? '')}
+  class="mt-5"
+>
+  <button
+    type="button"
+    class="inline-flex items-center min-h-[44px] text-rust-500 hover:text-rust-600 underline underline-offset-4 text-sm font-semibold"
+  >
+    {libelle}
+  </button>
+</p>
+
+<script>
+  // Au clic seulement : le bouton devient un lien vers l'adresse, reconstituée
+  // à partir de ses deux moitiés.
+  function brancherEmail() {
+    for (const bloc of document.querySelectorAll<HTMLElement>('[data-email-protege]')) {
+      const bouton = bloc.querySelector('button');
+      if (!bouton) continue;
+
+      bouton.addEventListener(
+        'click',
+        () => {
+          const adresse = `${atob(bloc.dataset.u ?? '')}@${atob(bloc.dataset.d ?? '')}`;
+          const lien = document.createElement('a');
+          lien.href = `mailto:${adresse}`;
+          lien.textContent = adresse;
+          lien.className = bouton.className;
+          bloc.replaceChildren(lien);
+          lien.focus();
+        },
+        { once: true },
+      );
+    }
+  }
+
+  document.addEventListener('astro:page-load', brancherEmail);
+</script>

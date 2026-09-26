@@ -1,0 +1,111 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/ui/Breadcrumb.astro';
+import Button from '@/components/ui/Button.astro';
+import Lightbox from '@/components/ui/Lightbox.astro';
+import { breadcrumbSchema, motorcycleRepairSchema } from '@/utils/json-ld';
+import { lireMotos, lirePageVente, nommeurDeTransitions, nomPhoto } from '@/lib/contenu';
+
+const page = await lirePageVente();
+const motos = await lireMotos();
+const transition = nommeurDeTransitions();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Vente' },
+  ]),
+  await motorcycleRepairSchema(),
+];
+
+// Cf. galerie-photos : un lien vers l'image, pour que le zoom reste utilisable
+// sans JavaScript.
+const zoomUrls = await Promise.all(
+  motos.map(async (moto) => (await getImage({ src: moto.photo, format: 'webp' })).src),
+);
+---
+
+<BaseLayout
+  title={page.referencement.titre}
+  description={page.referencement.description}
+  canonical="/vente"
+  jsonLd={jsonLd}
+>
+  <Breadcrumb items={[{ name: 'Accueil', url: '/' }, { name: 'Vente' }]} />
+
+  <header class="container mx-auto px-4 pt-10 pb-16">
+    <p class="eyebrow font-mono text-rust-500 uppercase tracking-[0.2em] text-xs mb-3">Vente</p>
+    <h1 class="font-display text-4xl md:text-5xl text-ink-900 max-w-2xl">{page.titre}</h1>
+    <p class="mt-6 max-w-2xl text-ink-700 text-lg leading-relaxed">
+      {page.texte}
+    </p>
+  </header>
+
+  <section class="container mx-auto px-4 pb-16">
+    {motos.length === 0 && (
+      <p class="text-ink-700 text-lg">Aucune moto disponible en ce moment. Appelez-moi pour savoir ce qui arrive.</p>
+    )}
+    <div class="grid sm:grid-cols-2 gap-6">
+      {motos.map((moto, index) => (
+        <figure
+          class:list={[
+            'reveal relative bg-white border border-ink-900/15 p-3',
+            'shadow-garage hover:shadow-garage-sm hover:translate-x-[3px] hover:translate-y-[3px]',
+            'transition-all duration-200 ease-clack',
+            index % 2 === 1 ? '[--reveal-delay:120ms]' : '',
+          ]}
+        >
+          {/* Une moto vendue reste affichée, avec son bandeau : elle montre que
+              l'atelier vend réellement. Guillaume la retire quand il veut. */}
+          {moto.vendue && (
+            <span class="absolute top-6 left-6 z-10 bg-ink-900 text-paper-50 font-mono text-xs uppercase tracking-[0.2em] px-3 py-1.5">
+              Vendue
+            </span>
+          )}
+          <Image
+            src={moto.photo}
+            alt={moto.description}
+            data-vt={transition(`photo-${nomPhoto(moto.photo)}`)}
+            class:list={['w-full h-72 object-cover', moto.vendue && 'grayscale-[60%]']}
+            widths={[400, 700]}
+            sizes="(min-width: 640px) 50vw, 100vw"
+            loading="lazy"
+          />
+          <figcaption class="pt-3 px-1">
+            {moto.titre && <span class="block font-display text-xl text-ink-900">{moto.titre}</span>}
+            <span class="block font-mono text-[0.68rem] uppercase tracking-wide text-ink-500">{moto.description}</span>
+            {moto.prix && !moto.vendue && <span class="block font-display text-lg text-rust-500 mt-1">{moto.prix}</span>}
+          </figcaption>
+          <a
+            href={zoomUrls[index]}
+            data-zoom
+            data-zoom-category={moto.vendue ? 'Vendue' : 'Vente'}
+            aria-label={`Agrandir la photo : ${moto.description}`}
+            class="absolute inset-0 w-full h-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rust-500"
+          ></a>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  {page.encarts.length > 0 && (
+    <section class="reveal container mx-auto px-4 pb-24 grid md:grid-cols-2 gap-px bg-ink-900/15 border border-ink-900/15">
+      {page.encarts.map((encart) => (
+        <div class="bg-paper-50 p-8">
+          <h2 class="font-display text-2xl md:text-3xl text-ink-900 mb-4">{encart.titre}</h2>
+          <p class="text-ink-700 leading-relaxed">{encart.texte}</p>
+        </div>
+      ))}
+    </section>
+  )}
+
+  <section class="bg-paper-100 py-20 text-center border-t border-dashed border-ink-900/20">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl text-ink-900 mb-6">{page.appel.titre}</h2>
+      <Button href="/contact">Me contacter</Button>
+    </div>
+  </section>
+
+  <Lightbox />
+</BaseLayout>

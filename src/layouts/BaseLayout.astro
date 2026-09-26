@@ -1,0 +1,424 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import type { JsonLdSchema } from '@/utils/json-ld';
+import { serializeSchema } from '@/utils/json-ld';
+import { SITE, OG_IMAGE } from '@/consts';
+import { cheminPublic } from '@/utils/chemin';
+import Navigation from '@/components/ui/Navigation.astro';
+import Footer from '@/components/ui/Footer.astro';
+import StickyCta from '@/components/ui/StickyCta.astro';
+import MotoTransition from '@/components/ui/MotoTransition.astro';
+
+// Polices auto-hébergées (sous-ensemble latin, uniquement les graisses utilisées).
+// Elles étaient servies par Google Fonts : appel tiers bloquant au rendu, et
+// transfert d'IP vers un tiers que la CNIL n'admet pas sans consentement.
+import '@fontsource/work-sans/latin-400.css';
+import '@fontsource/work-sans/latin-500.css';
+import '@fontsource/work-sans/latin-600.css';
+import '@fontsource/work-sans/latin-700.css';
+import '@fontsource/oswald/latin-500.css';
+import '@fontsource/oswald/latin-600.css';
+import '@fontsource/oswald/latin-700.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
+import '@fontsource/ibm-plex-mono/latin-600.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  ogType?: 'website' | 'article';
+  jsonLd?: JsonLdSchema | JsonLdSchema[];
+  noindex?: boolean;
+  hideCta?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = OG_IMAGE.path,
+  ogImageAlt = OG_IMAGE.alt,
+  ogType = 'website',
+  jsonLd,
+  noindex = false,
+  hideCta = false,
+} = Astro.props;
+
+// Une URL canonique par page, sans slash final ni extension, quelle que soit la
+// façon dont la page a été demandée : le .htaccess redirige `/contact/` et
+// `/contact.html` vers `/contact`, la canonique doit dire la même chose.
+const path = cheminPublic(canonical ?? Astro.url.pathname);
+const fullCanonical = `${SITE.url}${path}`;
+
+const fullOgImage = ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage}`;
+// Le nom de l'atelier complète le titre, sauf s'il y est déjà, et sauf si le
+// total dépasserait la longueur qu'affiche Google (environ 60 caractères) : le
+// formulaire de l'administration accepte un titre de 60 caractères, et le
+// suffixe en ajoute 17. Mieux vaut un titre sans la marque qu'un titre coupé.
+const suffixe = ` | ${SITE.name}`;
+const fullTitle =
+  title.includes(SITE.name) || title.length + suffixe.length > 60 ? title : title + suffixe;
+
+const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.name} />
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    )}
+
+    {/* Une page en noindex ne déclare pas de canonique : le signal serait
+        contradictoire, et il n'y a rien à consolider (404, mentions légales). */}
+    {!noindex && <link rel="canonical" href={fullCanonical} />}
+
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={fullCanonical} />
+    <meta property="og:image" content={fullOgImage} />
+    <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+    <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="fr_FR" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={fullOgImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f7f2e7" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {/* Noms des transitions partagées, générés depuis les contenus :
+        cf. src/pages/transitions.css.ts. */}
+    <link rel="stylesheet" href="/transitions.css" />
+    {/* Sans JavaScript, les blocs à apparition resteraient invisibles : cette
+        feuille les affiche d'emblée. Cf. public/sans-javascript.css. */}
+    <noscript><link rel="stylesheet" href="/sans-javascript.css" /></noscript>
+
+    <ClientRouter />
+
+    {schemas.map((schema) => (
+      <script type="application/ld+json" set:html={serializeSchema(schema)} is:inline />
+    ))}
+  </head>
+
+  <body
+    class:list={[
+      'min-h-screen bg-paper-50 bg-grain text-ink-700 antialiased font-sans',
+      // La barre d'appel fixe en bas d'écran recouvrirait la fin du footer sur mobile.
+      !hideCta && 'pb-16 lg:pb-0',
+    ]}
+  >
+    <a
+      href="#contenu"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-rust-500 focus:text-white focus:px-4 focus:py-2"
+    >
+      Aller au contenu principal
+    </a>
+
+    <Navigation />
+
+    <main id="contenu">
+      <slot />
+    </main>
+
+    <Footer />
+    {!hideCta && <StickyCta />}
+    <MotoTransition />
+
+    <style is:global>
+      /* Le titre de l'accueil dans l'en-tête persistant : `hidden` de Tailwind
+         ne suffirait pas, `xl:flex` reprendrait le dessus au-delà de 1280 px. */
+      [data-cine-title].is-hidden {
+        display: none !important;
+      }
+
+      /* --- Surtitres --- */
+      /* Le filet était un cadratin posé dans le texte, ce qui est une
+         convention anglo-saxonne et, accessoirement, lu à voix haute par les
+         lecteurs d'écran. Il est maintenant dessiné : rien à lire, et un trait
+         net qui va avec l'identité sérigraphiée. */
+      .eyebrow::before {
+        content: '';
+        display: inline-block;
+        width: 1.5rem;
+        height: 1px;
+        margin-right: 0.6rem;
+        vertical-align: 0.25em;
+        background-color: currentColor;
+      }
+
+      /* --- Apparition au scroll (cf. components/ui/Reveal.astro) --- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(1.75rem);
+        transition:
+          opacity 450ms cubic-bezier(0.2, 0.9, 0.1, 1) var(--reveal-delay, 0ms),
+          transform 450ms cubic-bezier(0.2, 0.9, 0.1, 1) var(--reveal-delay, 0ms);
+      }
+      .reveal.is-in {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* --- Parallaxe du hero --- */
+      /* Deux vitesses, pas une : c'est l'écart entre les couches qui fait la
+         profondeur. La photo dérive de 3,5 % de sa hauteur, le cadre pointillé
+         de 1 % seulement. Les valeurs sont volontairement basses : la photo est
+         dans un cadre à ombre dure, une amplitude plus forte lui donnerait l'air
+         de glisser plutôt que de respirer. Piloté par le scroll, sans une ligne
+         de JS, et inexistant là où `animation-timeline` n'est pas supporté. */
+      @media (prefers-reduced-motion: no-preference) {
+        @supports (animation-timeline: scroll()) {
+          .hero-photo,
+          .hero-box {
+            animation: hero-drift linear both;
+            animation-timeline: scroll(root block);
+            animation-range: 0 100vh;
+            will-change: transform;
+          }
+          .hero-photo {
+            --hero-drift: -3.5%;
+          }
+          .hero-box {
+            --hero-drift: -1%;
+          }
+          @keyframes hero-drift {
+            to {
+              transform: translateY(var(--hero-drift));
+            }
+          }
+        }
+      }
+
+      /* --- Transitions de page --- */
+      /* Le fondu par défaut du navigateur ne dit rien : tout disparaît, tout
+         revient. Ici la navigation est expliquée en deux temps.
+
+         1. L'élément cliqué ne se refond pas, il se déplace. Les photos portent
+            un `transition:name` identique de part et d'autre (cf. consts.ts,
+            champ `slug`) : la vignette d'une prestation sur l'accueil rejoint
+            physiquement son bloc sur /reparation. C'est la même leçon que le
+            parallaxe du hero, appliquée à la navigation : deux vitesses, une
+            couche qui bouge et une couche qui s'efface.
+         2. Le reste de la page sort vers le haut et la nouvelle entre par le
+            bas, courbe `clack`, arrêt net. Un décalage de calage d'impression,
+            pas un fondu.
+
+         Le tout tient en 260 ms : le but du site reste qu'on décroche son
+         téléphone, pas qu'on regarde une transition. */
+      @keyframes tow-page-out {
+        to {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+      }
+      @keyframes tow-page-in {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+      }
+
+      ::view-transition-old(root) {
+        animation: tow-page-out 160ms cubic-bezier(0.2, 0.9, 0.1, 1) both;
+      }
+      ::view-transition-new(root) {
+        animation: tow-page-in 260ms cubic-bezier(0.2, 0.9, 0.1, 1) both;
+      }
+
+      /* Les éléments nommés morphent sur la même courbe que le reste du site.
+         Sans cette règle ils garderaient le `ease` par défaut du navigateur,
+         et le mouvement partagé jurerait avec tout le reste. */
+      ::view-transition-group(*) {
+        animation-duration: 260ms;
+        animation-timing-function: cubic-bezier(0.2, 0.9, 0.1, 1);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .hero-photo,
+        .hero-box {
+          animation: none !important;
+        }
+        ::view-transition-group(*),
+        ::view-transition-old(*),
+        ::view-transition-new(*) {
+          animation: none !important;
+        }
+      }
+    </style>
+
+    <script>
+      // Un seul script client pour tout le site : apparitions au scroll et menu.
+      // Tout est branché sur `astro:page-load`, qui se déclenche au premier
+      // chargement comme après chaque navigation du ClientRouter.
+
+      function initReveal() {
+        const els = document.querySelectorAll<HTMLElement>('.reveal:not(.is-in)');
+        if (!els.length) return;
+
+        const show = (el: Element) => el.classList.add('is-in');
+
+        // Un contenu qui reste à `opacity: 0` est un contenu perdu. Dès que
+        // l'animation ne peut pas être garantie, on affiche sans animer :
+        // mouvement réduit demandé, ou IntersectionObserver indisponible.
+        if (
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+          !('IntersectionObserver' in window)
+        ) {
+          els.forEach(show);
+          return;
+        }
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              // Un bloc plus haut que l'écran n'atteint jamais 20 % de
+              // visibilité : dans ce cas, une demi-hauteur d'écran visible
+              // suffit à le déclencher.
+              const enough =
+                entry.intersectionRatio >= 0.2 ||
+                entry.intersectionRect.height >= window.innerHeight * 0.5;
+              if (!entry.isIntersecting || !enough) continue;
+              show(entry.target);
+              io.unobserve(entry.target);
+            }
+          },
+          { threshold: [0, 0.2], rootMargin: '0px 0px -10% 0px' },
+        );
+
+        els.forEach((el) => {
+          // Ce qui est déjà à l'écran au chargement s'affiche tout de suite :
+          // pas d'apparition rétroactive sur du contenu que l'on regarde déjà.
+          if (el.getBoundingClientRect().top > window.innerHeight * 0.9) {
+            io.observe(el);
+          } else {
+            show(el);
+          }
+        });
+
+        // Dernier filet : si dans 3 secondes un bloc n'a toujours pas été
+        // révélé alors qu'il est à l'écran, on l'affiche sans discuter.
+        window.setTimeout(() => {
+          document.querySelectorAll<HTMLElement>('.reveal:not(.is-in)').forEach((el) => {
+            const box = el.getBoundingClientRect();
+            if (box.top < window.innerHeight && box.bottom > 0) show(el);
+          });
+        }, 3000);
+      }
+
+      function closeMenu(refocus = false) {
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        if (!toggle || !menu) return;
+        menu.classList.add('hidden');
+        document.getElementById('icon-open')?.classList.remove('hidden');
+        document.getElementById('icon-close')?.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Ouvrir le menu');
+        if (refocus) toggle.focus();
+      }
+
+      function openMenu() {
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        if (!toggle || !menu) return;
+        menu.classList.remove('hidden');
+        document.getElementById('icon-open')?.classList.add('hidden');
+        document.getElementById('icon-close')?.classList.remove('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Fermer le menu');
+        menu.querySelector('a')?.focus();
+      }
+
+      function bindMenu() {
+        const toggle = document.getElementById('menu-toggle');
+        // L'en-tête est en `transition:persist` : il survit aux navigations et
+        // ses écouteurs avec. On ne les rebranche donc qu'une seule fois.
+        if (!toggle || toggle.dataset.bound === 'true') return;
+        toggle.dataset.bound = 'true';
+
+        toggle.addEventListener('click', () => {
+          toggle.getAttribute('aria-expanded') === 'true' ? closeMenu(true) : openMenu();
+        });
+
+        document.addEventListener('keydown', (event) => {
+          const menu = document.getElementById('mobile-menu');
+          if (!menu || menu.classList.contains('hidden')) return;
+
+          if (event.key === 'Escape') {
+            closeMenu(true);
+            return;
+          }
+
+          if (event.key !== 'Tab') return;
+
+          const focusable = menu.querySelectorAll<HTMLElement>('a');
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (!first || !last) return;
+
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        });
+      }
+
+      function syncHeader() {
+        // L'en-tête survit aux navigations : le titre doit suivre la page.
+        const home = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
+        document.querySelector('[data-cine-title]')?.classList.toggle('is-hidden', !home);
+      }
+
+      function syncActiveLink() {
+        // L'en-tête persistant garde le DOM de la page précédente : sans ça,
+        // `aria-current` et l'état visuel resteraient sur l'ancien onglet.
+        const current = window.location.pathname.replace(/\/+$/, '') || '/';
+        document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((link) => {
+          const href = (link.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+          const isActive = href === current;
+          link.classList.toggle('text-rust-500', isActive);
+          link.classList.toggle('text-ink-700', !isActive);
+          if (isActive) {
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      document.addEventListener('astro:page-load', () => {
+        initReveal();
+        bindMenu();
+        closeMenu();
+        syncActiveLink();
+        syncHeader();
+      });
+    </script>
+  </body>
+</html>

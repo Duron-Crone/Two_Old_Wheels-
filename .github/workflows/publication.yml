@@ -1,0 +1,73 @@
+# Publication du site sur l'hébergement OVH.
+#
+# À chaque enregistrement sur `main`, depuis l'administration ou depuis un poste :
+#   1. vérifie que l'administration et les contenus concordent ;
+#   2. construit le site et le teste sur un vrai Apache, avec le .htaccess de
+#      production (scripts/apache.mjs, scripts/verify.mjs) ;
+#   3. range le résultat sur la branche `deploy`.
+#
+# L'hébergement OVH suit la branche `deploy` (intégration Git et webhook, voir
+# README) et met le site à jour dans la minute. Si une étape échoue, rien n'est
+# publié : le site en ligne reste sur la version précédente, et un ticket est
+# ouvert sur le dépôt.
+name: Publication
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+# Deux enregistrements rapprochés : le second attend la fin du premier.
+concurrency:
+  group: publication
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  publier:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Dépendances
+        run: npm ci
+        env:
+          # Chrome ne sert qu'aux audits dans un navigateur, lancés à la main.
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Administration et contenus concordent
+        run: npm run check:cms -- --production
+
+      - name: Construction et recette sur Apache
+        run: npm run recette
+
+      - name: Publication sur la branche deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          sh scripts/publier.sh
+          "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          "Publication de ${GITHUB_SHA::7} : $(git log -1 --format=%s)"
+
+      # Guillaume ne regarde pas l'onglet Actions : en cas d'échec, un ticket
+      # prévient par e-mail les personnes qui suivent le dépôt, dont Martin.
+      - name: Signaler l'échec
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh issue create
+          --title "Publication échouée : $(git log -1 --format=%s)"
+          --body "Le site en ligne n'a pas changé. Détail : ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"

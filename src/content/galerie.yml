@@ -1,0 +1,31 @@
+photos:
+  - photo: /src/assets/photos/atelier-etabli.jpg
+    description: Carburateurs et bas moteur démontés sur mon établi
+    categorie: Mécanique
+  - photo: /src/assets/photos/moteur-883.jpg
+    description: Moteur de Harley-Davidson Sportster 883
+    categorie: Moteur
+  - photo: /src/assets/photos/carrosserie-triumph.jpg
+    description: Réservoir Triumph repeint
+    categorie: Carrosserie
+  - photo: /src/assets/photos/atelier-motos.jpg
+    description: Cafe racer sur base BMW en préparation
+    categorie: Custom
+  - photo: /src/assets/photos/partie-cycle-bobber.jpg
+    description: Châssis de bobber en restauration
+    categorie: Partie cycle
+  - photo: /src/assets/photos/electricite-multimetre.jpg
+    description: Contrôle de la batterie au multimètre
+    categorie: Électricité
+  - photo: /src/assets/photos/vente-honda-vt.jpg
+    description: Honda Shadow VT bordeaux
+    categorie: Vente
+  - photo: /src/assets/photos/vente-dax.jpg
+    description: Honda Dax rouge
+    categorie: Vente
+  - photo: /src/assets/photos/vente-harley-sportster.jpg
+    description: Harley-Davidson Sportster 883 gris argent
+    categorie: Vente
+  - photo: /src/assets/photos/atelier-yamaha-vintage.jpg
+    description: Yamaha XT bleue des années 1990
+    categorie: Vintage
