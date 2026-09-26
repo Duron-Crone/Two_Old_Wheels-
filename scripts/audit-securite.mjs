@@ -45,7 +45,9 @@ try {
     '/%2e%2e/%2e%2e/etc/passwd', '/..%2fetc/passwd', '/%2ehtaccess', '/admin/%2e%2e/.htaccess',
   ]) {
     const { code } = await statut(chemin);
-    ok(code === 404 || code === 403, `${chemin} : inaccessible (${code})`);
+    // 404 en local, 403 chez OVH, et 400 quand leur serveur rejette d'emblée
+    // une adresse malformée : dans tous les cas, rien n'est servi.
+    ok(code >= 400, `${chemin} : inaccessible (${code})`);
   }
 
   // --- Pas de listage de répertoire ----------------------------------------
