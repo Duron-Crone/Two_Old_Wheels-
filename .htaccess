@@ -78,13 +78,15 @@ AddCharset utf-8 .html .css .js .mjs .json .xml .txt .yml .yaml .svg
   RewriteCond %{THE_REQUEST} ^[A-Z]+\s/([^?\s]+)\.html[\s?]
   RewriteRule ^ /%1 [R=301,L]
 
-  # 2. /contact/ vers /contact. Les pages sont nommées une à une : c'est la
-  #    seule façon fiable de ne jamais toucher aux deux vrais dossiers du site,
-  #    /admin/ et /_astro/, auxquels Apache rajoute le slash aussitôt retiré, ce
-  #    qui partait en boucle. Les tests « est-ce un dossier » et « ce fichier
-  #    existe-t-il » ne répondent pas la même chose d'un serveur à l'autre quand
-  #    l'adresse finit par un slash. Une page ajoutée au site se rajoute ici.
-  RewriteRule ^(reparation|vente|galerie-photos|contact|mentions-legales)/$ /$1 [R=301,L,QSD]
+  # 2. /contact/ vers /contact. Deux précautions qui viennent chacune d'un
+  #    échec observé : la règle lit THE_REQUEST, la ligne envoyée par le
+  #    navigateur, parce que chez OVH l'adresse est déjà résolue en
+  #    « contact.html » avec le slash traité comme un complément de chemin ; et
+  #    elle nomme les cinq pages, parce que viser toutes les adresses faisait
+  #    tourner /_astro/ en boucle avec Apache qui remettait le slash aussitôt
+  #    retiré. Une page ajoutée au site se rajoute dans cette liste.
+  RewriteCond %{THE_REQUEST} ^[A-Z]+\s/(reparation|vente|galerie-photos|contact|mentions-legales)/[\s?]
+  RewriteRule ^ /%1 [R=301,L]
 
   # 3. /contact sert contact.html.
   RewriteCond %{REQUEST_FILENAME} !-f
