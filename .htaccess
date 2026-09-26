@@ -82,8 +82,6 @@ AddCharset utf-8 .html .css .js .mjs .json .xml .txt .yml .yaml .svg
   #    (/admin/) gardent leur « / », qu'Apache ajoute d'office : sans la
   #    condition -d, Apache et cette règle se renverraient la balle à l'infini.
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{DOCUMENT_ROOT}/$1.html -f [OR]
-  RewriteCond %{REQUEST_FILENAME}.html -f
   RewriteRule ^(.+)/$ /$1 [R=301,L]
 
   # 3. /contact sert contact.html.
