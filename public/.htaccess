@@ -30,13 +30,20 @@ AddCharset utf-8 .html .css .js .mjs .json .xml .txt .yml .yaml .svg
   # tests HTTPS couvrent les deux cas documentés par OVH (%{HTTPS} sur les
   # hébergements mutualisés, %{ENV:HTTPS} sur Cloud Web). Limité au domaine
   # du site pour ne pas rediriger la recette locale ni l'adresse technique OVH.
+  # L'adresse visée est reprise de THE_REQUEST, la ligne d'origine envoyée par
+  # le navigateur, et non de %{REQUEST_URI} : après la réécriture interne vers
+  # contact.html, REQUEST_URI vaut déjà /contact.html et la redirection
+  # publiait cette forme-là. La cible est écrite en entier, sinon Apache
+  # fabrique l'adresse avec le port et sort un « :443 » inutile.
   RewriteCond %{HTTP_HOST} ^(www\.)?twooldwheels\.fr$ [NC]
   RewriteCond %{HTTPS} !=on
   RewriteCond %{ENV:HTTPS} !=on
-  RewriteRule ^ https://www.twooldwheels.fr%{REQUEST_URI} [R=301,L]
+  RewriteCond %{THE_REQUEST} ^[A-Z]+\s([^\s?]+)
+  RewriteRule ^ https://www.twooldwheels.fr%1 [R=301,L]
 
   RewriteCond %{HTTP_HOST} ^twooldwheels\.fr$ [NC]
-  RewriteRule ^ https://www.twooldwheels.fr%{REQUEST_URI} [R=301,L]
+  RewriteCond %{THE_REQUEST} ^[A-Z]+\s([^\s?]+)
+  RewriteRule ^ https://www.twooldwheels.fr%1 [R=301,L]
 
   # --- Fichiers cachés ------------------------------------------------------
   # L'intégration Git d'OVH dépose un dossier .git dans le répertoire du site :
@@ -75,6 +82,7 @@ AddCharset utf-8 .html .css .js .mjs .json .xml .txt .yml .yaml .svg
   #    (/admin/) gardent leur « / », qu'Apache ajoute d'office : sans la
   #    condition -d, Apache et cette règle se renverraient la balle à l'infini.
   RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f [OR]
   RewriteCond %{REQUEST_FILENAME}.html -f
   RewriteRule ^(.+)/$ /$1 [R=301,L]
 

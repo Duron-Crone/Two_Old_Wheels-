@@ -163,18 +163,23 @@ for (const hote of ['twooldwheels.fr', 'www.twooldwheels.fr']) {
         status: x.status,
         location: x.headers.get('location'),
       }));
-  check(r.status === 301 && r.location === 'https://www.twooldwheels.fr/contact?source=test',
-        `http://${hote} redirige vers https://www.twooldwheels.fr`);
+  const visee = r.location ? new URL(r.location) : null;
+  check(r.status === 301 && visee?.hostname === 'www.twooldwheels.fr' && visee.protocol === 'https:' &&
+        visee.pathname === '/contact' && visee.search === '?source=test',
+        `http://${hote} redirige vers https://www.twooldwheels.fr (${r.location})`);
 }
 if (!LOCAL) {
   const r = await fetch('https://twooldwheels.fr/contact', { redirect: 'manual' });
-  check(r.status === 301 && r.headers.get('location') === 'https://www.twooldwheels.fr/contact',
-        'https://twooldwheels.fr redirige vers www');
+  const visee = r.headers.get('location') ? new URL(r.headers.get('location')) : null;
+  check(r.status === 301 && visee?.hostname === 'www.twooldwheels.fr' && visee.pathname === '/contact',
+        `https://twooldwheels.fr redirige vers www (${r.headers.get('location')})`);
 }
 
 // --- fichiers cachés (le .git déposé par OVH, le .htaccess) ---
 for (const path of ['/.htaccess', '/.git/HEAD', '/.git/config']) {
-  check((await fetch(BASE + path, { redirect: 'manual' })).status === 404, `${path} : inaccessible (404)`);
+  // 403 chez OVH, 404 en local : dans les deux cas rien n'est servi.
+  const code = (await fetch(BASE + path, { redirect: 'manual' })).status;
+  check(code === 404 || code === 403, `${path} : inaccessible (${code})`);
 }
 
 // --- cache et en-têtes par type de ressource ---
