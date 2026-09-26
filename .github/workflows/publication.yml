@@ -12,12 +12,13 @@
 # ouvert sur le dépôt.
 name: Publication
 
+# Aucun filtre de chemins : un envoi publie, toujours. Avec un filtre, GitHub
+# n'exécute rien lorsqu'il ne peut pas établir la liste des fichiers modifiés,
+# ce qui arrive dès qu'un historique est réécrit : la publication est alors
+# silencieusement sautée, et le site reste en arrière sans que rien ne le dise.
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
   workflow_dispatch:
 
 # Deux enregistrements rapprochés : le second attend la fin du premier.
