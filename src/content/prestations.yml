@@ -1,25 +1,27 @@
 prestations:
-  - titre: Moteur
-    texte: Diagnostic, carburation, réglages et remise en état. Je cherche d'abord d'où vient le problème, avant de remplacer quoi que ce soit.
-    photo: /src/assets/photos/moteur-883.jpg
-    photo_description: Moteur de Harley-Davidson Sportster 883 dans mon atelier
+  - titre: Mecanique
+    texte: Diagnostic, carburation, réglages et remise en état. Restauration compléte de moteur, boite, cardan, tout ce qui touche a la mecanique.
+    photo: /src/assets/photos/sam_5541.webp
+    photo_description: Moteur de Harley-Davidson 1340
   - titre: Entretien
-    texte: Vidange, chaîne, pneus, freins et révision complète. C'est ce qui coûte le moins cher, et c'est ce qui évite le reste.
+    texte: Vidange, chaîne, pneus, freins, révision complète, etc... Je fait le suivit de vos entretiens et surtout cela permet de faire vivre votre moto logtemps
     photo: /src/assets/photos/atelier-etabli.jpg
     photo_description: Carburateurs et bas moteur démontés sur mon établi
   - titre: Partie cycle
-    texte: Freins, suspensions, direction et transmission. Une ancienne qui freine bien et qui tient la route, ça se règle.
+    texte: Freins, suspensions, direction et transmission, comme le montage de durite aviation, changement de guidon, changement d'amortisseur etc...
     photo: /src/assets/photos/partie-cycle-bobber.jpg
     photo_description: Châssis de bobber en restauration sur mon pont
   - titre: Préparation et custom
-    texte: "Cafe racer, bobber, scrambler, ou juste une selle, un guidon et un échappement qui changent tout. Vous arrivez avec une idée, on la met au point ensemble, la moto sous les yeux."
-    photo: /src/assets/photos/atelier-motos.jpg
-    photo_description: Cafe racer sur base BMW en préparation dans mon atelier
+    texte: Chopper,Cafe racer, bobber, scrambler, modifier l'arriere d'un cadre, un guidon,  un échappement qui changent votre moto et la mets a votre gout. Vous arrivez avec une idée, on en discute et je la realise.
+    photo: /src/assets/photos/20260624_210746.webp
+    photo_description: scrambler sur base yamaha 600 xjn
   - titre: Électricité
-    texte: Batterie, charge, démarrage, éclairage, faisceau. C'est souvent là que se cachent les pannes qui n'ont l'air de rien.
+    texte: Diagnostique électrique, batterie, faisceau electrique, controle des elements electriques et réparation la mieux adapter. Montage accessoirs comme des feux additionels
     photo: /src/assets/photos/electricite-multimetre.jpg
     photo_description: Contrôle de la batterie au multimètre
   - titre: Carrosserie
-    texte: Préparation et peinture des réservoirs et des pièces de carrosserie, à la teinte d'origine ou à celle de votre choix. C'est la dernière étape, et c'est celle qui se voit.
+    texte: |-
+      Réparation des éléments de carrosserie, peinture d'origine ou personalisé, ainsi que la sellerie.
+      Vos idées peuvent prendre vie.
     photo: /src/assets/photos/carrosserie-triumph.jpg
-    photo_description: Réservoir Triumph repeint dans mon atelier
+    photo_description: Réparation reservoir de Triumph
