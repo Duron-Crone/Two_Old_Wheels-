@@ -1,8 +1,8 @@
 hero:
-  titre: Je remets vos motos anciennes sur la route.
-  texte: "Réparation, entretien, restauration et préparation sur mesure, toutes marques. 25 ans de mécanique, dans mon atelier de Saint-Martin-d'Uriage, au pied de Belledonne."
-  photo: /src/assets/photos/partie-cycle-bobber.jpg
-  photo_description: Châssis de bobber en restauration sur le pont de mon atelier
+  titre: Je remets et maintien vos motos anciennes sur la route.
+  texte: Réparation, entretien, restauration et préparation sur mesure, toutes marques. 25 ans de mécanique, je mets mes conpetences a votre disposition dans mon atelier de Saint-Martin-d'Uriage, au pied de Belledonne.
+  photo: /src/assets/photos/20260920_175114-1.webp
+  photo_description: Projet chopper sur base sportster 1000cc
   legende: Projet bobber en cours à l'atelier
 atelier:
   titre: 25 ans de mécanique, un atelier depuis 2021
@@ -30,5 +30,5 @@ appel:
   titre: Une moto à réparer ou un projet ?
   texte: Appelez-moi, ou envoyez-moi une photo de votre moto avec deux mots sur ce qui se passe. Je vous dis ce que j'en pense et on fixe un rendez-vous.
 referencement:
-  titre: "Two Old Wheels : réparation moto vintage à Uriage (Isère)"
+  titre: 'Two Old Wheels : réparation moto vintage à Uriage (Isère)'
   description: Réparation, entretien, restauration et custom de motos anciennes à Saint-Martin-d'Uriage, près de Grenoble. Toutes marques. Vente et dépôt-vente.
