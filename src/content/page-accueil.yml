@@ -7,10 +7,13 @@ hero:
 atelier:
   titre: 25 ans de mécanique, un atelier depuis 2021
   paragraphes:
-    - J'ai passé 25 ans les mains dans la mécanique avant d'ouvrir Two Old Wheels en 2021, à Saint-Martin-d'Uriage, au-dessus de Grenoble.
-    - "Ce sont les anciennes qui m'intéressent le plus : une japonaise des années 70, une anglaise, une américaine, chacune a sa logique et ses habitudes. Je prends aussi les modèles récents, toutes marques."
-    - Sur une moto ancienne, la pièce d'origine ne se trouve pas toujours. On en parle avant de commencer, et je vous dis franchement ce qui est faisable et ce qui ne l'est pas.
-    - "La préparation, c'est l'autre moitié du métier : cafe racer, bobber, scrambler, ou simplement une selle et un guidon qui vous vont mieux. Vous arrivez avec une idée, on la met au point ensemble."
+    - Cela fait un peu plus de 25 ans que je suis dans la mécanique, et en 2021 voyant la difficulté pour les propriétaires de moto ancienne de trouver un atelier qui s'occupe de leur moto je décide d'ouvrire mon atelier sur St martin d'uriage pret de Grenoble.
+    - |-
+      Je travail principalement sur les motos des année 70-80-90-2000-2010-2020.
+      Toutes marque, japonaise, americaine, anglaise, chinoise...
+      Chaque marque est interessante
+    - Sur certaine moto, la pièce d'origine ne se trouve pas toujours ou trés difficilement. On en parle avant de commencer, j'essai de trouver une solution et je vous dis franchement ce qui est possible de faire.
+    - La préparation, c'est l'autre moitié du métier :chopper, cafe racer, bobber, scrambler, ou un trail a équipé pour l'aventure . Vous arrivez avec une idée, on la met au point ensemble.
   photo: /src/assets/photos/atelier-yamaha-vintage.jpg
   photo_description: Yamaha XT bleue des années 1990
   legende: Yamaha XT, années 1990
