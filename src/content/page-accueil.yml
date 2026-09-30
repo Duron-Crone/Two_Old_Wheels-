@@ -3,7 +3,7 @@ hero:
   texte: Réparation, entretien, restauration et préparation sur mesure, toutes marques. 25 ans de mécanique, je mets mes conpetences a votre disposition dans mon atelier de Saint-Martin-d'Uriage, au pied de Belledonne.
   photo: /src/assets/photos/20260920_175114-1.webp
   photo_description: Projet chopper sur base sportster 1000cc
-  legende: Projet bobber en cours à l'atelier
+  legende: Projet chopper en cours à l'atelier
 atelier:
   titre: 25 ans de mécanique, un atelier depuis 2021
   paragraphes:
@@ -14,9 +14,9 @@ atelier:
       Chaque marque est interessante
     - Sur certaine moto, la pièce d'origine ne se trouve pas toujours ou trés difficilement. On en parle avant de commencer, j'essai de trouver une solution et je vous dis franchement ce qui est possible de faire.
     - La préparation, c'est l'autre moitié du métier :chopper, cafe racer, bobber, scrambler, ou un trail a équipé pour l'aventure . Vous arrivez avec une idée, on la met au point ensemble.
-  photo: /src/assets/photos/atelier-yamaha-vintage.jpg
-  photo_description: Yamaha XT bleue des années 1990
-  legende: Yamaha XT, années 1990
+  photo: /src/assets/photos/20210821_143608.webp
+  photo_description: Yamaha SR 125 des années 1990
+  legende: Yamaha SR 125, années 1990
 prestations:
   titre: Ce que je fais à l'atelier
 vente:
