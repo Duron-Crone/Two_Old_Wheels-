@@ -8,7 +8,7 @@ photos:
   - photo: /src/assets/photos/carrosserie-triumph.jpg
     description: Réservoir Triumph repeint
     categorie: Carrosserie
-  - photo: /src/assets/photos/atelier-motos.jpg
+  - photo: /src/assets/photos/20220820_115213.webp
     description: Cafe racer sur base BMW en préparation
     categorie: Custom
   - photo: /src/assets/photos/partie-cycle-bobber.jpg
@@ -17,15 +17,6 @@ photos:
   - photo: /src/assets/photos/electricite-multimetre.jpg
     description: Contrôle de la batterie au multimètre
     categorie: Électricité
-  - photo: /src/assets/photos/vente-honda-vt.jpg
-    description: Honda Shadow VT bordeaux
-    categorie: Vente
-  - photo: /src/assets/photos/vente-dax.jpg
-    description: Honda Dax rouge
-    categorie: Vente
-  - photo: /src/assets/photos/vente-harley-sportster.jpg
-    description: Harley-Davidson Sportster 883 gris argent
-    categorie: Vente
-  - photo: /src/assets/photos/atelier-yamaha-vintage.jpg
+  - photo: /src/assets/photos/20210821_143608.webp
     description: Yamaha XT bleue des années 1990
     categorie: Vintage
