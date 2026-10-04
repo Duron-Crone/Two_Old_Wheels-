@@ -92,14 +92,31 @@ export function nomPhoto(photo: ImageMetadata): string {
  * Deux éléments d'une même page ne doivent jamais porter le même nom de
  * transition : le navigateur annulerait toute la transition. Si Guillaume met
  * la même photo à deux endroits de l'accueil, seule la première la garde.
+ *
+ * `destinations`, si fourni, limite les noms à ceux qui existent sur une autre
+ * page : un nom sans destination n'a nulle part où aller.
  */
-export function nommeurDeTransitions() {
+export function nommeurDeTransitions(destinations?: Set<string>) {
   const pris = new Set<string>();
   return (nom: string): string | undefined => {
-    if (pris.has(nom)) return undefined;
+    if (pris.has(nom) || (destinations && !destinations.has(nom))) return undefined;
     pris.add(nom);
     return nom;
   };
+}
+
+/**
+ * Noms de transition portés par les pages autres que l'accueil : prestations sur
+ * /reparation, photos sur /galerie-photos et /vente. Les photos de l'accueil se
+ * choisissent dans l'administration ; si Guillaume en retire une des autres
+ * pages, elle reste affichée sur l'accueil, simplement sans transition.
+ */
+export async function transitionsHorsAccueil(): Promise<Set<string>> {
+  const noms = new Set<string>();
+  for (const p of await lirePrestations()) noms.add(`service-${p.ancre}`);
+  for (const g of await lireGalerie()) noms.add(`photo-${nomPhoto(g.photo)}`);
+  for (const m of await lireMotos()) noms.add(`photo-${nomPhoto(m.photo)}`);
+  return noms;
 }
 
 // --- Horaires -----------------------------------------------------------------------

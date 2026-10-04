@@ -236,7 +236,8 @@ for (const [path, body] of Object.entries(pageBodies)) {
 
 // Chaque nom posé sur l'accueil doit exister sur au moins une autre page :
 // sinon l'élément n'a nulle part où aller. Les contenus étant éditables, on ne
-// présume plus de la page de destination.
+// présume plus de la page de destination ; l'accueil retire de lui-même les noms
+// sans destination (cf. transitionsHorsAccueil), ce contrôle le garantit.
 // L'adresse e-mail est proposée derrière un bouton, jamais écrite dans la page.
 check(pageBodies['/contact'].includes('data-email-protege'), 'contact : adresse e-mail derrière un bouton');
 

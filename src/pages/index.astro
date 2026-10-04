@@ -11,13 +11,14 @@ import {
   lirePrestations,
   nommeurDeTransitions,
   nomPhoto,
+  transitionsHorsAccueil,
 } from '@/lib/contenu';
 
 const page = await lirePageAccueil();
 const prestations = await lirePrestations();
 const apercuGalerie = (await lireGalerie()).slice(0, 4);
 const faq = await lireFaq();
-const transition = nommeurDeTransitions();
+const transition = nommeurDeTransitions(await transitionsHorsAccueil());
 
 const jsonLd = [await motorcycleRepairSchema(), websiteSchema(), faqSchema(faq)];
 ---
