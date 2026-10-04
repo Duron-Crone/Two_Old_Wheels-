@@ -90,13 +90,18 @@ const zoomUrls = await Promise.all(
   </section>
 
   {page.encarts.length > 0 && (
-    <section class="reveal container mx-auto px-4 pb-24 grid md:grid-cols-2 gap-px bg-ink-900/15 border border-ink-900/15">
-      {page.encarts.map((encart) => (
-        <div class="bg-paper-50 p-8">
-          <h2 class="font-display text-2xl md:text-3xl text-ink-900 mb-4">{encart.titre}</h2>
-          <p class="text-ink-700 leading-relaxed">{encart.texte}</p>
-        </div>
-      ))}
+    <section class="reveal container mx-auto px-4 pb-24">
+      {/* Le cadre est sur la grille, pas sur la section : sinon le fond gris des
+          filets remplit aussi les marges. Un encart seul, ou le dernier d'un
+          nombre impair, prend toute la largeur plutôt que de laisser une case vide. */}
+      <div class="grid md:grid-cols-2 gap-px bg-ink-900/15 border border-ink-900/15">
+        {page.encarts.map((encart) => (
+          <div class="bg-paper-50 p-8 md:odd:last:col-span-2">
+            <h2 class="font-display text-2xl md:text-3xl text-ink-900 mb-4">{encart.titre}</h2>
+            <p class="text-ink-700 leading-relaxed">{encart.texte}</p>
+          </div>
+        ))}
+      </div>
     </section>
   )}
 
