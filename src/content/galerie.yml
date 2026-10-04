@@ -9,7 +9,7 @@ photos:
     description: Réservoir Triumph repeint
     categorie: Carrosserie
   - photo: /src/assets/photos/20220820_115213.webp
-    description: Cafe racer sur base BMW en préparation
+    description: Cafe racer sur base kawasaki ER5
     categorie: Custom
   - photo: /src/assets/photos/partie-cycle-bobber.jpg
     description: Châssis de bobber en restauration
@@ -18,5 +18,5 @@ photos:
     description: Contrôle de la batterie au multimètre
     categorie: Électricité
   - photo: /src/assets/photos/20210821_143608.webp
-    description: Yamaha XT bleue des années 1990
+    description: Yamaha SR 125
     categorie: Vintage
