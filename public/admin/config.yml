@@ -75,9 +75,12 @@ singletons:
           - name: description
             label: Description de la photo
             widget: string
+            pattern: &redaction
+              - '^(?![\s\S]*(?:[—–]|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2}|[Ss]cooter|[Mm]obylette|[Cc]yclomoteur|[àÀ] compléter|[Ll]orem ipsum|Formulaire de contact))[\s\S]*$'
+              - "Pas de tiret long (— ou –, mettez une virgule ou deux-points), pas d'adresse e-mail (elle est déjà sur la page Contact), pas de scooter, mobylette ni cyclomoteur."
             hint: 'Modèle et couleur, par exemple « Honda Dax rouge ». Lue par Google et par les personnes malvoyantes.'
-          - { name: titre, label: Titre, widget: string, required: false, hint: 'Facultatif. Affiché en gros au-dessus de la description.' }
-          - { name: prix, label: Prix, widget: string, required: false, hint: 'Facultatif, par exemple « 3 500 € ». Masqué quand la moto est vendue.' }
+          - { name: titre, label: Titre, widget: string, required: false, hint: 'Facultatif. Affiché en gros au-dessus de la description.', pattern: *redaction }
+          - { name: prix, label: Prix, widget: string, required: false, hint: 'Facultatif, par exemple « 3 500 € ». Masqué quand la moto est vendue.', pattern: *redaction }
           - { name: vendue, label: Vendue, widget: boolean, default: false, required: false }
 
   - name: galerie
@@ -101,6 +104,7 @@ singletons:
           - name: description
             label: Description
             widget: string
+            pattern: *redaction
             hint: 'Ce qu''on voit sur la photo. Affichée sous la photo, lue par Google et par les personnes malvoyantes.'
           - name: categorie
             label: Catégorie
@@ -121,10 +125,10 @@ singletons:
         thumbnail: photo
         hint: Affichées sur l'accueil et sur la page Réparation, dans cet ordre.
         fields:
-          - { name: titre, label: Titre, widget: string, maxlength: 40 }
-          - { name: texte, label: Texte, widget: text, maxlength: 220 }
+          - { name: titre, label: Titre, widget: string, maxlength: 40, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, maxlength: 220, pattern: *redaction }
           - { name: photo, label: Photo, widget: image }
-          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes., pattern: *redaction }
 
   - name: faq
     label: Questions fréquentes
@@ -141,8 +145,8 @@ singletons:
           Dans une réponse, écrivez {telephone} ou {adresse} : le site affichera le numéro
           et l'adresse à jour.
         fields:
-          - { name: question, label: Question, widget: string }
-          - { name: reponse, label: Réponse, widget: text }
+          - { name: question, label: Question, widget: string, pattern: *redaction }
+          - { name: reponse, label: Réponse, widget: text, pattern: *redaction }
 
   - divider: true
 
@@ -157,60 +161,60 @@ singletons:
         label: En haut de page
         widget: object
         fields:
-          - { name: titre, label: Grand titre, widget: string, maxlength: 70 }
-          - { name: texte, label: Texte, widget: text, maxlength: 260 }
+          - { name: titre, label: Grand titre, widget: string, maxlength: 70, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, maxlength: 260, pattern: *redaction }
           - { name: photo, label: Photo, widget: image }
-          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
-          - { name: legende, label: Légende sous la photo, widget: string, required: false }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes., pattern: *redaction }
+          - { name: legende, label: Légende sous la photo, widget: string, required: false, pattern: *redaction }
       - name: atelier
         label: Présentation de l'atelier
         widget: object
         fields:
-          - { name: titre, label: Titre, widget: string }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
           - name: paragraphes
             label: Paragraphes
             label_singular: paragraphe
             widget: list
             min: 1
-            field: { name: paragraphe, label: Paragraphe, widget: text }
+            field: { name: paragraphe, label: Paragraphe, widget: text, pattern: *redaction }
           - { name: photo, label: Photo, widget: image }
-          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
-          - { name: legende, label: Légende sous la photo, widget: string, required: false }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes., pattern: *redaction }
+          - { name: legende, label: Légende sous la photo, widget: string, required: false, pattern: *redaction }
       - name: prestations
         label: Titre de la section Prestations
         widget: object
         collapsed: true
         fields:
-          - { name: titre, label: Titre, widget: string }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
       - name: vente
         label: Section Vente
         widget: object
         collapsed: true
         fields:
-          - { name: titre, label: Titre, widget: string }
-          - { name: texte, label: Texte, widget: text }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, pattern: *redaction }
           - { name: photo, label: Photo, widget: image }
-          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes. }
-          - { name: legende, label: Légende sous la photo, widget: string, required: false }
+          - { name: photo_description, label: Description de la photo, widget: string, hint: Lue par Google et par les personnes malvoyantes., pattern: *redaction }
+          - { name: legende, label: Légende sous la photo, widget: string, required: false, pattern: *redaction }
       - name: galerie
         label: Titre de la section Galerie
         widget: object
         collapsed: true
         fields:
-          - { name: titre, label: Titre, widget: string }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
       - name: faq
         label: Titre de la section Questions fréquentes
         widget: object
         collapsed: true
         fields:
-          - { name: titre, label: Titre, widget: string }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
       - name: appel
         label: Appel en bas de page
         widget: object
         collapsed: true
         fields:
-          - { name: titre, label: Titre, widget: string }
-          - { name: texte, label: Texte, widget: text }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, pattern: *redaction }
       - &referencement
         name: referencement
         label: Référencement Google
@@ -220,8 +224,8 @@ singletons:
         fields:
           # « Two Old Wheels » est ajouté au bout du titre quand il n'y est pas déjà,
           # sauf si le total dépasse 60 caractères, la longueur qu'affiche Google.
-          - { name: titre, label: Titre dans Google, widget: string, maxlength: 60 }
-          - { name: description, label: Description dans Google, widget: text, minlength: 70, maxlength: 155 }
+          - { name: titre, label: Titre dans Google, widget: string, maxlength: 60, pattern: *redaction }
+          - { name: description, label: Description dans Google, widget: text, minlength: 70, maxlength: 155, pattern: *redaction }
 
   - name: page-reparation
     label: Page Réparation
@@ -229,14 +233,14 @@ singletons:
     file: src/content/page-reparation.yml
     preview_path: /reparation
     fields:
-      - { name: titre, label: Grand titre, widget: string }
-      - { name: texte, label: Texte d'introduction, widget: text }
+      - { name: titre, label: Grand titre, widget: string, pattern: *redaction }
+      - { name: texte, label: Texte d'introduction, widget: text, pattern: *redaction }
       - name: appel
         label: Appel en bas de page
         widget: object
         fields:
-          - { name: titre, label: Titre, widget: string }
-          - { name: texte, label: Texte, widget: text }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, pattern: *redaction }
       - *referencement
 
   - name: page-vente
@@ -245,8 +249,8 @@ singletons:
     file: src/content/page-vente.yml
     preview_path: /vente
     fields:
-      - { name: titre, label: Grand titre, widget: string }
-      - { name: texte, label: Texte d'introduction, widget: text }
+      - { name: titre, label: Grand titre, widget: string, pattern: *redaction }
+      - { name: texte, label: Texte d'introduction, widget: text, pattern: *redaction }
       - name: encarts
         label: Encarts sous les motos
         label_singular: encart
@@ -254,13 +258,13 @@ singletons:
         max: 4
         summary: '{{fields.titre}}'
         fields:
-          - { name: titre, label: Titre, widget: string }
-          - { name: texte, label: Texte, widget: text }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, pattern: *redaction }
       - name: appel
         label: Appel en bas de page
         widget: object
         fields:
-          - { name: titre, label: Titre, widget: string }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
       - *referencement
 
   - name: page-galerie
@@ -269,8 +273,8 @@ singletons:
     file: src/content/page-galerie.yml
     preview_path: /galerie-photos
     fields:
-      - { name: titre, label: Grand titre, widget: string }
-      - { name: texte, label: Texte d'introduction, widget: text }
+      - { name: titre, label: Grand titre, widget: string, pattern: *redaction }
+      - { name: texte, label: Texte d'introduction, widget: text, pattern: *redaction }
       - *referencement
 
   - name: page-contact
@@ -279,20 +283,20 @@ singletons:
     file: src/content/page-contact.yml
     preview_path: /contact
     fields:
-      - { name: titre, label: Grand titre, widget: string }
-      - { name: texte, label: Texte d'introduction, widget: text }
+      - { name: titre, label: Grand titre, widget: string, pattern: *redaction }
+      - { name: texte, label: Texte d'introduction, widget: text, pattern: *redaction }
       - name: telephone
         label: Bloc Téléphone et adresse
         widget: object
         fields:
-          - { name: titre, label: Titre, widget: string }
-          - { name: consigne, label: Consigne sous l'adresse, widget: string, required: false }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
+          - { name: consigne, label: Consigne sous l'adresse, widget: string, required: false, pattern: *redaction }
       - name: reseaux
         label: Bloc Instagram et Facebook
         widget: object
         fields:
-          - { name: titre, label: Titre, widget: string }
-          - { name: texte, label: Texte, widget: text }
+          - { name: titre, label: Titre, widget: string, pattern: *redaction }
+          - { name: texte, label: Texte, widget: text, pattern: *redaction }
       - *referencement
 
   - divider: true
@@ -329,9 +333,10 @@ singletons:
           - { name: fermeture, label: Fermeture, widget: string, pattern: ['^([01][0-9]|2[0-3]):[0-5][0-9]$', 'Format 18:30'] }
       - { name: instagram, label: Lien Instagram, widget: string, type: url, required: false }
       - { name: facebook, label: Lien Facebook, widget: string, type: url, required: false }
-      - { name: accroche, label: Phrase du pied de page, widget: string, maxlength: 120 }
+      - { name: accroche, label: Phrase du pied de page, widget: string, maxlength: 120, pattern: *redaction }
       - name: presentation
         label: Présentation courte de l'atelier
         widget: text
         maxlength: 200
+        pattern: *redaction
         hint: Lue par Google et par les assistants de recherche. Une ou deux phrases.

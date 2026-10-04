@@ -35,7 +35,8 @@ let controles = 0;
 const ok = (cond, message, liste = erreurs) => { controles++; if (!cond) liste.push(message); };
 
 const configTexte = await readFile(join(ROOT, 'public/admin/config.yml'), 'utf8');
-const config = parse(configTexte);
+// Comme Sveltia : alias illimités (le motif de rédaction est partagé par tous les champs).
+const config = parse(configTexte, { maxAliasCount: -1 });
 
 // --- 1. Schéma officiel --------------------------------------------------------
 const schema = JSON.parse(await readFile(join(ROOT, 'node_modules/@sveltia/cms/schema/sveltia-cms.json'), 'utf8'));

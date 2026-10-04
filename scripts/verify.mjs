@@ -51,9 +51,10 @@ for (const path of PAGES) {
 
   // --- SEO ---
   check((body.match(/<h1/g) || []).length === 1, `${path}: un seul h1`);
-  const title = body.match(/<title>(.*?)<\/title>/s)?.[1] ?? '';
+  // Longueurs comptées sur le texte lu, pas sur le HTML : `&` s'écrit `&amp;`.
+  const title = unescapeHtml(body.match(/<title>(.*?)<\/title>/s)?.[1] ?? '');
   check(title.length > 10 && title.length <= 65, `${path}: longueur du title (${title.length})`);
-  const desc = body.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '';
+  const desc = unescapeHtml(body.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '');
   check(desc.length >= 70 && desc.length <= 165, `${path}: longueur de la description (${desc.length})`);
   const noindex = body.includes('noindex');
   check(!/rel="canonical" href="[^"]*\.html"/.test(body), `${path}: canonique sans .html`);
@@ -200,7 +201,7 @@ check((await fetch(BASE + '/url-inexistante')).status === 404, '404: vrai statut
 // --- ancres des prestations ---
 const home = await (await fetch(BASE + '/')).text();
 const rep = await (await fetch(BASE + '/reparation')).text();
-for (const m of home.matchAll(/href="\/reparation#([a-z-]+)"/g)) {
+for (const m of home.matchAll(/href="\/reparation#([a-z0-9-]+)"/g)) {
   check(rep.includes(`id="${m[1]}"`), `ancre #${m[1]} présente sur /reparation`);
 }
 
@@ -246,7 +247,13 @@ for (const n of homeNames) {
   const ailleurs = PAGES.filter((p) => p !== '/').some((p) => vtNames(pageBodies[p]).includes(n));
   check(ailleurs, `${n}: présent aussi sur une autre page`);
 }
-check(homeNames.length >= 8, `accueil: ${homeNames.length} éléments morphent`);
+// Pas de seuil fixe : le nombre de prestations et de photos dépend des contenus.
+for (const m of pageBodies['/'].matchAll(/href="\/reparation#([a-z0-9-]+)"/g)) {
+  check(homeNames.includes(`service-${m[1]}`), `accueil: la prestation ${m[1]} morphe`);
+}
+if (vtNames(pageBodies['/galerie-photos']).length) {
+  check(homeNames.some((n) => n.startsWith('photo-')), 'accueil: les photos morphent');
+}
 
 // --- llms.txt généré depuis les contenus ---
 const llms = await (await fetch(BASE + '/llms.txt')).text();
