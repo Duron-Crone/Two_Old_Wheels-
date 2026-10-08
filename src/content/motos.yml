@@ -1,9 +1,4 @@
 motos:
-  - photo: /src/assets/photos/20260912_150338.webp
-    description: BMW F650ST
-    titre: BMW
-    prix: 2500€
-    vendue: false
   - photo: /src/assets/photos/img-20260620-wa0014.webp
     description: BMW K1200S
     titre: BMW
